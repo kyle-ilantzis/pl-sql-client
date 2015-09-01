@@ -1,0 +1,16 @@
+{
+  "name": "pl-sql-client",
+  "version": "0.0.1",
+  "license": "GPL-3.0",
+  
+  "repository": "kyle-ilantzis/pl-sql-client",
+  
+  "dependencies": {
+	"any-db": "*",
+	"any-db-mysql": "*",
+	"any-db-postgres": "*",
+	"any-db-sqlite3": "*"
+  },
+  
+  "main": "src/index.html"
+}
