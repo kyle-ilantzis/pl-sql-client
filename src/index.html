@@ -24,37 +24,37 @@
 <head>
 <body>
 	<script type="text/jsx">
-	
+
 		var DB_TYPES = ["MYSQL","Postgres","SQLite3"]
-		
+
 		var DbTypeSpinner = React.createClass({
 			render: function() {
-				
+
 				var createOption = function(db,i) {
 					return <option key={i}>{db}</option>;
 				};
-				
+
 				return <select>
 					{ createOption("",-1) }
 					{ DB_TYPES.map(createOption) }
 				</select>;
 			}
 		});
-		
+
 		var DbItem = React.createClass({
-			
+
 			onEdit: function() {
 				if (this.props.onEdit) {
 					this.props.onEdit(this.props.id);
 				}
 			},
-			
+
 			onDelete: function() {
 				if (this.props.onDelete) {
 					this.props.onDelete(this.props.id);
 				}
 			},
-		
+
 			render: function() {
 				return <div>
 					<p>{this.props.url}</p>
@@ -64,7 +64,7 @@
 				</div>;
 			}
 		});
-		
+
 		var DbEditItem = React.createClass({
 			render: function() {
 				return <div>
@@ -75,7 +75,7 @@
 				</div>;
 			}
 		});
-		
+
 		var DbList = React.createClass({
 			getInitialState: function() {
 				return { dbs: [
@@ -87,26 +87,37 @@
 			onEdit: function() {
 				console.log("on edit");
 			},
-			
+
 			onDelete: function() {
 				console.log("on delete");
 			},
-			
+
 			render: function() {
-				
+
 				var that = this;
-				
+
 				var createDbItem = function(db,i) {
 					return <DbItem key={i} id={i} url={db.url} dbType={db.dbType} onEdit={that.onEdit} onDelete={that.onDelete}/>
 				};
-				
+
 				return <div>
 					{this.state.dbs.map(createDbItem)}
 					<DbEditItem key={"add"} id={"add"}/>
 				</div>;
 			}
 		});
-		
+
 		React.render(<DbList/>,document.body);
+	</script>
+	<script type="text/JavaScript">
+
+	var MultiQuery = require('./backend/multiquery.js');
+	var multiquery = new MultiQuery()
+
+	multiquery.query().then(function(result) {
+		// TODO @kyle-ilantzis Implements me!
+		console.log(result);
+	});
+	
 	</script>
 </body>
