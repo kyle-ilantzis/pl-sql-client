@@ -82,8 +82,10 @@
 
 			render: function() {
 
+				var that = this;
+			
 				var createOption = function(db,i) {
-					return <option key={i}>{db}</option>;
+					return <option key={i} selected={db == that.props.dbType}>{db}</option>;
 				};
 
 				return <select ref="select" onChange={this.onChange}>
