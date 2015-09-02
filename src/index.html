@@ -19,7 +19,7 @@
 <!doctype html!>
 
 <head>
-	<script src="app:/_/libs/react.js"></script>
+	<script src="app:/_/libs/react-with-addons.js"></script>
 	<script src="app:/_/libs/JSXTransformer.js"></script>
 <head>
 <body>
@@ -47,8 +47,6 @@
 			return -1;
 		}
 		
-		
-		
 		var DB_TYPE_NIL = "";
 		var DB_TYPE_MYSQL = "MYSQL";
 		var DB_TYPE_POSTGRES = "POSTGRES";
@@ -66,16 +64,20 @@
 			user: "root",
 			password: ""
 		};
-
+	
+		var STATE_VIEW = "VIEW";
+		var STATE_EDIT = "EDIT";
+		
 		var DbTypeSpinner = React.createClass({
 		
-			onChange: function() {
-			
+			getDbType: function() {
 				var select = this.refs.select.getDOMNode();
 				var option = select.options[select.selectedIndex];
-				var label = option.label;
-				
-				nullToNoop(this.props.onChange)(label);
+				return option.label;
+			},
+		
+			onChange: function() {
+				nullToNoop(this.props.onChange)(this,this.getDbType());
 			},
 
 			render: function() {
@@ -92,24 +94,39 @@
 		
 		var DbEditFields = React.createClass({
 			
+			mixins: [React.addons.LinkedStateMixin],
+			
+			getInitialState: function() {
+				return {
+					host: this.props.db.host,
+					port: this.props.db.port,
+					user: this.props.db.user,
+					password: this.props.db.password
+				};
+			},
+			
+			getDb: function() {
+				return this.state;
+			},
+			
 			render: function() {
 			
 				return <div>
 					<div>
 						<label>Host</label>
-						<input name="host" type="text" defaultValue={this.props.db.host}/>
+						<input type="text" valueLink={this.linkState('host')}/>
 					</div>
 					<div>
 						<label>Port</label>
-						<input name="port" type="text" defaultValue={this.props.db.port}/>
+						<input type="text" valueLink={this.linkState('port')}/>
 					</div>
 					<div>
 						<label>User</label>
-						<input name="user" type="text" defaultValue={this.props.db.user}/>
+						<input type="text" valueLink={this.linkState('user')}/>
 					</div>
 					<div>
 						<label>Password</label>
-						<input name="password" type="text" defaultValue={this.props.db.password}/>
+						<input type="text" valueLink={this.linkState('password')}/>
 					</div>
 				</div>
 			}
@@ -117,12 +134,22 @@
 
 		var DbSqlite3EditFields = React.createClass({
 		
+			mixins: [React.addons.LinkedStateMixin],
+			
+			getInitialState: function() {
+				return { path: this.props.db.path };
+			},
+		
+			getDb: function() {
+				return this.state;
+			},
+		
 			render: function() {
 				
 				return <div>
 					<div>
 						<label>Path</label>
-						<input name="path" type="text" defaultValue={this.props.db.path}/>
+						<input ref="path" name="path" type="text" valueLink={this.linkState('path')}/>
 					</div>
 				</div>
 			}
@@ -169,12 +196,12 @@
 		var DbItem = React.createClass({
 
 			onEdit: function(e) {
-				nullToNoop(this.props.onEdit)(this.props.db.id);
+				nullToNoop(this.props.onEdit)(this,this.props.db.id);
 				e.preventDefault();
 			},
 
 			onDelete: function(e) {
-				nullToNoop(this.props.onDelete)(this.props.db.id);
+				nullToNoop(this.props.onDelete)(this,this.props.db.id);
 				e.preventDefault();
 			},
 
@@ -206,7 +233,15 @@
 				return { db: this.props.db };
 			},
 			
-			onDbTypeChange: function(dbType) {
+			getDb: function() {
+				
+				return extend(
+					this.refs.dbEditFields.getDb(),
+					{ id: this.state.db.id, dbType: this.refs.dbTypeSpinner.getDbType() }
+				);
+			},
+			
+			onDbTypeChange: function(sender,dbType) {
 			
 				var db = extend({}, this.state.db);
 				db.dbType = dbType;
@@ -215,12 +250,12 @@
 			},
 		
 			onSave: function(e) {
-				nullToNoop(this.props.onSave)(this.props.db.id);
+				nullToNoop(this.props.onSave)(this,this.props.db.id);
 				e.preventDefault();
 			},
 		
 			onCancel: function(e) {
-				nullToNoop(this.props.onCancel)(this.props.db.id);
+				nullToNoop(this.props.onCancel)(this,this.props.db.id);
 				e.preventDefault();
 			},
 		
@@ -239,7 +274,7 @@
 				};
 				
 				return <div>
-					<DbTypeSpinner dbType={this.state.db.dbType} onChange={this.onDbTypeChange}/>
+					<DbTypeSpinner ref="dbTypeSpinner" dbType={this.state.db.dbType} onChange={this.onDbTypeChange}/>
 					{ createDbEditFields(this.state.db) }
 					<a href="#" onClick={this.onSave}>S</a>
 					<a href="#" onClick={this.onCancel}>C</a>
@@ -248,9 +283,6 @@
 		});
 
 		var DbList = React.createClass({
-		
-			STATE_VIEW: "VIEW",
-			STATE_EDIT: "EDIT",
 			
 			getInitialState: function() {
 			
@@ -259,19 +291,35 @@
 					var mappedDb = extend({},db);
 					mappedDb.id = i;
 				
-					return { state: this.STATE_VIEW, db: mappedDb };
+					return { state: STATE_VIEW, db: mappedDb };
 				});
 			
 				return { dbItems: dbItems };
 			},
-
-			onEdit: function(id) {
-				console.log("on edit");
+			
+			getDbItemIndex: function(id) {
+				return findIndex(this.state.dbItems, function(dbItem) { return dbItem.db.id === id; });
+			},
+			
+			updateDbItem: function(id, f) {
+			
+				var i = this.getDbItemIndex(id);
+				
+				if ( i !== -1 ) {
+					
+					f(this.state.dbItems[i]);
+					this.setState(this.state);
+				}
+				
+			},
+			
+			onEdit: function(sender,id) {
+				this.updateDbItem(id, function(dbItem) { dbItem.state = STATE_EDIT; });
 			},
 
-			onDelete: function(id) {
+			onDelete: function(sender,id) {
 			
-				var i = findIndex(this.state.dbItems, function(dbItem) { return dbItem.db.id === id; });
+				var i = this.getDbItemIndex(id);
 			
 				if ( i !== -1 ) {
 				
@@ -284,26 +332,31 @@
 				// TODO - Undo bar appears
 			},
 			
-			onSave: function() {
-				console.log("on save");
+			onSave: function(sender,id) {
+				this.updateDbItem(id, function(dbItem) {
+					
+					dbItem.state = STATE_VIEW;
+					dbItem.db = sender.getDb();
+				});
 			},
 			
-			onCancel: function() {
-				console.log("on cancel");
+			onCancel: function(sender,id) {
+				this.updateDbItem(id, function(dbItem) { dbItem.state = STATE_VIEW; });
 			},
 
 			render: function() {
 
 				var that = this;
 
-				var createDbItem = function(dbItem,i) {
+				var createDbItem = function(dbItem) {
 					
 					switch(dbItem.state) {
-						case this.STATE_VIEW:
+						case STATE_VIEW:
 							return <DbItem key={dbItem.db.id} db={dbItem.db} onEdit={that.onEdit} onDelete={that.onDelete}/>;
-						case this.STATE_EDIT:
-							return <DbEditItem key={dbItem.db.id} db={dbItem.db} onSave={that.onSave} onCancel={that.onCancel}/>
+						case STATE_EDIT:
+							return <DbEditItem key={dbItem.db.id} db={dbItem.db} onSave={that.onSave} onCancel={that.onCancel}/>;
 						default:
+							console.log("warning: unsupported dbItem.state: " + dbItem.state);
 							return;
 					}
 				};
