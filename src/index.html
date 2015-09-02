@@ -35,6 +35,20 @@
 			return a;
 		}
 		
+		function findIndex(arr,f) {
+			
+			var len = arr.length;
+			for(var i = 0; i < len; i++) {
+				if (f(arr[i])) {
+					return i;
+				}
+			}
+			
+			return -1;
+		}
+		
+		
+		
 		var DB_TYPE_NIL = "";
 		var DB_TYPE_MYSQL = "MYSQL";
 		var DB_TYPE_POSTGRES = "POSTGRES";
@@ -240,8 +254,12 @@
 			
 			getInitialState: function() {
 			
-				var dbItems = this.props.dbs.map(function(db){
-					return { state: this.STATE_VIEW, db: db };
+				var dbItems = this.props.dbs.map(function(db,i){	
+					
+					var mappedDb = extend({},db);
+					mappedDb.id = i;
+				
+					return { state: this.STATE_VIEW, db: mappedDb };
 				});
 			
 				return { dbItems: dbItems };
@@ -251,8 +269,19 @@
 				console.log("on edit");
 			},
 
-			onDelete: function() {
-				console.log("on delete");
+			onDelete: function(id) {
+			
+				var i = findIndex(this.state.dbItems, function(dbItem) { return dbItem.db.id === id; });
+			
+				if ( i !== -1 ) {
+				
+					var dbItems = this.state.dbItems.slice();
+					dbItems.splice(i,1);
+					
+					this.setState({ dbItems: dbItems });
+				}	
+
+				// TODO - Undo bar appears
 			},
 			
 			onSave: function() {
@@ -271,9 +300,9 @@
 					
 					switch(dbItem.state) {
 						case this.STATE_VIEW:
-							return <DbItem key={i} db={dbItem.db} onEdit={that.onEdit} onDelete={that.onDelete}/>;
+							return <DbItem key={dbItem.db.id} db={dbItem.db} onEdit={that.onEdit} onDelete={that.onDelete}/>;
 						case this.STATE_EDIT:
-							return <DbEditItem key={i} db={dbItem.db} onSave={that.onSave} onCancel={that.onCancel}/>
+							return <DbEditItem key={dbItem.db.id} db={dbItem.db} onSave={that.onSave} onCancel={that.onCancel}/>
 						default:
 							return;
 					}
@@ -286,7 +315,12 @@
 			}
 		});
 
-		React.render(<DbList dbs={[{ host: "localhost", port: "3306", username:"", password: "", dbType: DB_TYPE_MYSQL}]}/>,document.body);
+		var mockDbs = [
+			{ host: "localhost", port: "3306", username:"", password: "", dbType: DB_TYPE_MYSQL},
+			{ host: "localhost", port: "4545", username:"", password: "", dbType: DB_TYPE_POSTGRES}
+		];
+		
+		React.render(<DbList dbs={mockDbs}/>,document.body);
 	</script>
 	
 	<!--
