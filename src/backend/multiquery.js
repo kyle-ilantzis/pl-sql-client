@@ -6,7 +6,12 @@ let moment = require('moment');
 
 let MultiQuery = function() {};
 
-MultiQuery.prototype.query = function() {
+/**
+ * @param command to execute
+ * @param command.url[] to use to execute the query
+ * @param command.query sql query to execute
+ */
+MultiQuery.prototype.query = function(command) {
   return new Promise(function(resolve, reject){
     let request_date = moment().unix();
 
@@ -14,8 +19,7 @@ MultiQuery.prototype.query = function() {
       "SELECT * FROM pet;": {
         "1441149765": [
           {
-            "database": "driver://localhost/test",
-            "schema": "test",
+            "url": "driver://localhost/test",
             "execution_start_date": request_date + 1,
             "execution_end_date": request_date + 2,
             "fields": [
@@ -36,8 +40,7 @@ MultiQuery.prototype.query = function() {
             }
           },
           {
-            "database": "localhost2",
-            "schema": "test",
+            "url": "localhost2",
             "execution_start_date": request_date + 3,
             "execution_end_date": request_date + 5,
             "fields": [
