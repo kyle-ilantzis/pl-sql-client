@@ -47,6 +47,10 @@
 			return -1;
 		}
 		
+		var update = function(that,cmd) {
+			that.setState(React.addons.update(that.state,cmd));
+		};
+		
 		var DB_TYPE_NIL = "";
 		var DB_TYPE_MYSQL = "MYSQL";
 		var DB_TYPE_POSTGRES = "POSTGRES";
@@ -85,10 +89,10 @@
 				var that = this;
 			
 				var createOption = function(db,i) {
-					return <option key={i} selected={db == that.props.dbType}>{db}</option>;
+					return <option key={i}>{db}</option>;
 				};
 
-				return <select ref="select" onChange={this.onChange}>
+				return <select ref="select" onChange={this.onChange} defaultValue={this.props.dbType}>
 					{ DB_TYPES.map(createOption) }
 				</select>;
 			}
@@ -255,11 +259,7 @@
 			},
 			
 			onDbTypeChange: function(sender,dbType) {
-			
-				var db = extend({}, this.state.db);
-				db.dbType = dbType;
-				
-				this.setState({ db: db });
+				update(this, { db: { dbType: {$set: dbType} } });
 			},
 		
 			onSave: function(e) {
@@ -319,29 +319,23 @@
 			updateDbItem: function(id, f) {
 			
 				var i = this.getDbItemIndex(id);
-				
 				if ( i !== -1 ) {
-					
-					f(this.state.dbItems[i]);
-					this.setState(this.state);
-				}
-				
+					var newDbItem = f( extend({},this.state.dbItems[i]) );
+					update(this, { dbItems: {$splice: [[i,1,newDbItem]]} });
+				}				
 			},
 			
 			onEdit: function(sender,id) {
-				this.updateDbItem(id, function(dbItem) { dbItem.state = STATE_EDIT; });
+				this.updateDbItem(id, function(dbItem) {
+					return extend( dbItem, {state: STATE_EDIT} );
+				});
 			},
 
 			onDelete: function(sender,id) {
 			
 				var i = this.getDbItemIndex(id);
-			
 				if ( i !== -1 ) {
-				
-					var dbItems = this.state.dbItems.slice();
-					dbItems.splice(i,1);
-					
-					this.setState({ dbItems: dbItems });
+					update(this, { dbItems: {$splice: [[i,1]]} });
 				}	
 
 				// TODO - Undo bar appears
@@ -358,13 +352,11 @@
 					
 					var newDbItem = { state: STATE_VIEW, db: newDb };
 				
-					this.setState({ idSeq: idSeq, dbItems: this.state.dbItems.concat([newDbItem])});
+					update(this, { idSeq: {$set: idSeq}, dbItems: {$push: [newDbItem]}});
 				}
 				else {
 					this.updateDbItem(id, function(dbItem) {
-						
-						dbItem.state = STATE_VIEW;
-						dbItem.db = sender.getDb();
+						return extend( dbItem, {state: STATE_VIEW, db: sender.getDb()} );
 					});
 				}
 			},
@@ -375,7 +367,9 @@
 					sender.clear();
 				}
 				else {
-					this.updateDbItem(id, function(dbItem) { dbItem.state = STATE_VIEW; });
+					this.updateDbItem(id, function(dbItem) {
+						return extend( dbItem, {state: STATE_VIEW} );
+					});
 				}
 			},
 
