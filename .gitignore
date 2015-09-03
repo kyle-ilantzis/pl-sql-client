@@ -1,3 +1,4 @@
 node_modules/
-run.bat
+build/
+*.bat
 npm-debug.log

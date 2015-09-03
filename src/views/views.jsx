@@ -1,30 +1,4 @@
-<!--
-	pl-sql-client - Query many database at once
-    Copyright (C) 2015  Kyle Ilantzis, Pier-Luc Caron St-Pierre
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-
-<!doctype html!>
-
-<head>
-	<script src="app:/_/libs/react-with-addons.js"></script>
-	<script src="app:/_/libs/JSXTransformer.js"></script>
-<head>
-<body>
-	<script type="text/jsx">
-		
+(function(window){
 		var noop = function() {};
 		var nullToNoop = function(f) { return f ? f : noop; }
 		
@@ -396,26 +370,11 @@
 				</div>;
 			}
 		});
-
-		var mockDbs = [
-			{ host: "localhost", port: "3306", username:"", password: "", dbType: DB_TYPE_MYSQL},
-			{ host: "localhost", port: "4545", username:"", password: "", dbType: DB_TYPE_POSTGRES}
-		];
 		
-		React.render(<DbList dbs={mockDbs}/>,document.body);
-	</script>
-	
-	<!--
-	<script type="text/JavaScript">
-
-	var MultiQuery = require('./backend/multiquery.js');
-	var multiquery = new MultiQuery()
-
-	multiquery.query().then(function(result) {
-		// TODO @kyle-ilantzis Implements me!
-		console.log(result);
-	});
-	
-	</script>
-	-->
-</body>
+		window.DB_TYPE_NIL = DB_TYPE_NIL;
+		window.DB_TYPE_MYSQL = DB_TYPE_MYSQL;
+		window.DB_TYPE_POSTGRES = DB_TYPE_POSTGRES;
+		window.DB_TYPE_SQLITE3 = DB_TYPE_SQLITE3;
+		window.DB_TYPES = DB_TYPES;
+		window.DbList = DbList;
+})(window);
