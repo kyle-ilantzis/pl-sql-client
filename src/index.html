@@ -108,7 +108,11 @@
 			},
 			
 			getDb: function() {
-				return this.state;
+				return extend({},this.state);
+			},
+			
+			clear: function() {
+				this.setState(this.getInitialState());
 			},
 			
 			render: function() {
@@ -143,8 +147,10 @@
 			},
 		
 			getDb: function() {
-				return this.state;
+				return extend({},this.state);
 			},
+		
+			clear: noop,
 		
 			render: function() {
 				
@@ -243,6 +249,11 @@
 				);
 			},
 			
+			clear: function() {
+				this.refs.dbEditFields.clear();
+				this.setState(this.getInitialState());
+			},
+			
 			onDbTypeChange: function(sender,dbType) {
 			
 				var db = extend({}, this.state.db);
@@ -296,7 +307,9 @@
 					return { state: STATE_VIEW, db: mappedDb };
 				});
 			
-				return { dbItems: dbItems };
+				var idSeq = dbItems.length == 0 ? 0 : dbItems[dbItems.length-1].db.id + 1;
+				
+				return { idSeq: idSeq, dbItems: dbItems };
 			},
 			
 			getDbItemIndex: function(id) {
@@ -335,15 +348,35 @@
 			},
 			
 			onSave: function(sender,id) {
-				this.updateDbItem(id, function(dbItem) {
+				
+				if (id == ADD_DB_ID) {
 					
-					dbItem.state = STATE_VIEW;
-					dbItem.db = sender.getDb();
-				});
+					var idSeq = this.state.idSeq;
+					
+					var newDb = this.refs.dbAddItem.getDb();
+					newDb.id = idSeq++;
+					
+					var newDbItem = { state: STATE_VIEW, db: newDb };
+				
+					this.setState({ idSeq: idSeq, dbItems: this.state.dbItems.concat([newDbItem])});
+				}
+				else {
+					this.updateDbItem(id, function(dbItem) {
+						
+						dbItem.state = STATE_VIEW;
+						dbItem.db = sender.getDb();
+					});
+				}
 			},
 			
 			onCancel: function(sender,id) {
-				this.updateDbItem(id, function(dbItem) { dbItem.state = STATE_VIEW; });
+			
+				if (id == ADD_DB_ID) {
+					sender.clear();
+				}
+				else {
+					this.updateDbItem(id, function(dbItem) { dbItem.state = STATE_VIEW; });
+				}
 			},
 
 			render: function() {
@@ -365,7 +398,7 @@
 
 				return <div>
 					{this.state.dbItems.map(createDbItem)}
-					<DbEditItem key={ADD_DB_ID} db={DEFAULT_ADD_DB} onSave={that.onSave} onCancel={that.onCancel}/>
+					<DbEditItem ref="dbAddItem" key={ADD_DB_ID} db={DEFAULT_ADD_DB} onSave={that.onSave} onCancel={that.onCancel}/>
 				</div>;
 			}
 		});
