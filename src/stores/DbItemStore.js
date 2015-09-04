@@ -57,8 +57,8 @@
 	
 		// TODO - Fetch the dbItems from disk/network/whatever
 		var mockDbs = [
-			{ host: "localhost", port: "3306", username:"", password: "", dbType: pl.DB_TYPE_MYSQL},
-			{ host: "localhost", port: "4545", username:"", password: "", dbType: pl.DB_TYPE_POSTGRES}
+			{ host: "localhost", port: "3306", username:"", password: "", dbType: pl.DbTypes.DB_TYPE_MYSQL},
+			{ host: "localhost", port: "4545", username:"", password: "", dbType: pl.DbTypes.DB_TYPE_POSTGRES}
 		];
 		
 		dbItems = mockDbs.map(function(db,i){	
@@ -156,6 +156,12 @@
 			
 		getDbItems: function() {
 			return dbItems;
+		},
+		
+		getDbUrls: function() {
+			return dbItems.map(function(dbItem) {
+				return pl.DbTypes.toUrl(dbItem.db);
+			});
 		}
 	});
 })(pl||{});

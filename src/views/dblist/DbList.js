@@ -6,7 +6,7 @@
 	
 	var DEFAULT_ADD_DB = {
 		id: ADD_DB_ID,
-		dbType: pl.DB_TYPE_MYSQL,
+		dbType: pl.DbTypes.DB_TYPE_MYSQL,
 		host: "localhost",
 		port: "3306",
 		user: "root",
