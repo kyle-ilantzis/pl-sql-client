@@ -24,7 +24,6 @@
 	var DbItemStore = {
 		
 		LOAD: "DbItemStore-LOAD",
-		LOADED: "DbItemStore-LOADED",
 		
 		EDIT: "DbItemStore-EDIT",
 		CANCEL_EDIT: "DbItemStore-CANCEL_EDIT",
@@ -62,27 +61,23 @@
 	var load = function() {
 	
 		// TODO - Fetch the dbItems from disk/network/whatever
-		
-		pl.DbItemActions.loaded([
+		var mockDbs = [
 			{ host: "localhost", port: "3306", username:"", password: "", dbType: pl.DB_TYPE_MYSQL},
 			{ host: "localhost", port: "4545", username:"", password: "", dbType: pl.DB_TYPE_POSTGRES}
-		]);
-	};
-	
-	var loaded = function(dbs) {
+		];
 		
-		dbItems = dbs.map(function(db,i){	
+		dbItems = mockDbs.map(function(db,i){	
 				
 			var mappedDb = pl.extend({},db);
 			mappedDb.id = i;
 		
 			return { state: DbItemStore.STATE_VIEW, db: mappedDb };
 		});
-		
+ 		
 		idSeq = dbItems.length == 0 ? 0 : dbItems[dbItems.length-1].db.id + 1;
 		
-		notify();		
-	}
+		notify();
+	};
 	
 	var edit = function(id) {
 		
@@ -138,10 +133,6 @@
 			
 			case DbItemStore.LOAD:
 				load();
-				break;
-			
-			case DbItemStore.LOADED:
-				loaded(action.dbs);
 				break;
 				
 			case DbItemStore.EDIT:

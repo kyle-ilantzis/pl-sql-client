@@ -28,14 +28,6 @@
 			});
 		},
 		
-		loaded: function(dbs) {
-			
-			pl.Dispatcher.dispatch({
-				actionType: pl.DbItemStore.LOADED,
-				dbs: dbs
-			});
-		},
-		
 		edit: function(id) {
 			pl.Dispatcher.dispatch({
 				actionType: pl.DbItemStore.EDIT,
