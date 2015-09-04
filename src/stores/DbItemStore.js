@@ -37,13 +37,8 @@
 
 	var idSeq;
 	var dbItems = null;
-	var callbacks = [];
 	
-	var notify = function() {
-		callbacks.forEach(function(cb) {
-			cb();
-		});
-	}
+	var notify = pl.observable(DbItemStore);
 	
 	var getDbItemIndex = function(id) {		
 		return pl.findIndex(dbItems, function(dbItem) { return dbItem.db.id === id; });
@@ -161,17 +156,6 @@
 			
 		getDbItems: function() {
 			return dbItems;
-		},
-		
-		addChangeListener: function(callback) {
-			callbacks.push(callback);
-		},
-		
-		removeChangeListener: function(callback) {
-			var i = callbacks.indexOf(callback);
-			if (i !== -1) {
-				callbacks.splice(i,1);
-			}
 		}
 	});
 })(pl||{});

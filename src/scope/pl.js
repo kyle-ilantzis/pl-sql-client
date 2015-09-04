@@ -37,6 +37,33 @@
 		
 		include: function(that,props) {
 			props.forEach(function(prop) { that[prop] = pl[prop]; });
+		},
+		
+		observable: function(it) {
+			
+			var callbacks = [];
+			
+			var notify = function() {
+				callbacks.forEach(function(cb) {
+					cb();
+				});
+			}
+			
+			pl.extend(it, {
+				
+				addChangeListener: function(callback) {
+					callbacks.push(callback);
+				},
+				
+				removeChangeListener: function(callback) {
+					var i = callbacks.indexOf(callback);
+					if (i !== -1) {
+						callbacks.splice(i,1);
+					}
+				}
+			});
+			
+			return notify;
 		}
 	});
 })(window);

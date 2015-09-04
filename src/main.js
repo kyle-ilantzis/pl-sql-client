@@ -4,6 +4,9 @@
 		
 		pl.DbItemActions.load();
 		
+		// dummy query here for now
+		pl.DbQueryActions.query("SELECT * FROM USERS");
+		
 		React.render(<pl.DbList/>,document.body);
 	}
 	
