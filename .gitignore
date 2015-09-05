@@ -2,3 +2,4 @@ node_modules/
 build/
 *.bat
 npm-debug.log
+.settings/

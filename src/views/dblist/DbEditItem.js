@@ -20,7 +20,7 @@
 		},
 		
 		onDbTypeChange: function(sender,dbType) {
-			pl.update(this, { db: { dbType: {$set: dbType} } });
+			pl.updateState(this, { db: { dbType: {$set: dbType} } });
 		},
 	
 		onSave: function(e) {

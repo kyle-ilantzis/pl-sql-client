@@ -1,11 +1,10 @@
 (function(pl){
-	var mockDbs = [
-		{ host: "localhost", port: "3306", username:"", password: "", dbType: pl.DB_TYPE_MYSQL},
-		{ host: "localhost", port: "4545", username:"", password: "", dbType: pl.DB_TYPE_POSTGRES}
-	];
 
 	var main = function() {
-		React.render(<pl.DbList dbs={mockDbs}/>,document.body);
+		
+		pl.DbItemActions.load();
+		
+		React.render(<pl.DbList/>,document.body);
 	}
 	
 	pl.main = main;

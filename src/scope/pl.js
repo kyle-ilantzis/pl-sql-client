@@ -27,7 +27,11 @@
 			return -1;
 		},
 		
-		update: function(that,cmd) {
+		update: function(it,cmd) {
+			return React.addons.update(it,cmd);
+		},
+		
+		updateState: function(that,cmd) {
 			that.setState(React.addons.update(that.state,cmd));
 		},
 		

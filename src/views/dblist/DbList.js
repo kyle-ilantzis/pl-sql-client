@@ -1,5 +1,7 @@
 (function(pl){
 
+	var TAG = "DbList:::";
+
 	var ADD_DB_ID = "add";
 	
 	var DEFAULT_ADD_DB = {
@@ -11,72 +13,40 @@
 		password: ""
 	};
 
-	var STATE_VIEW = "VIEW";
-	var STATE_EDIT = "EDIT";
-
 	var DbList = React.createClass({
 		
 		getInitialState: function() {
-		
-			var dbItems = this.props.dbs.map(function(db,i){	
-				
-				var mappedDb = pl.extend({},db);
-				mappedDb.id = i;
-			
-				return { state: STATE_VIEW, db: mappedDb };
-			});
-		
-			var idSeq = dbItems.length == 0 ? 0 : dbItems[dbItems.length-1].db.id + 1;
-			
-			return { idSeq: idSeq, dbItems: dbItems };
+			return { dbItems: pl.DbItemStore.getDbItems() };
 		},
 		
-		getDbItemIndex: function(id) {
-			return pl.findIndex(this.state.dbItems, function(dbItem) { return dbItem.db.id === id; });
+		componentDidMount: function() {
+			pl.DbItemStore.addChangeListener(this.onChange);
 		},
 		
-		updateDbItem: function(id, f) {
+		componentWillUnmount: function() {
+			pl.DbItemStore.removeChangeListener(this.onChange);
+		},
 		
-			var i = this.getDbItemIndex(id);
-			if ( i !== -1 ) {
-				var newDbItem = f( pl.extend({},this.state.dbItems[i]) );
-				pl.update(this, { dbItems: {$splice: [[i,1,newDbItem]]} });
-			}				
+		onChange: function() {
+			pl.updateState(this, { dbItems: {$set: pl.DbItemStore.getDbItems()} });
 		},
 		
 		onEdit: function(sender,id) {
-			this.updateDbItem(id, function(dbItem) {
-				return pl.extend( dbItem, {state: STATE_EDIT} );
-			});
+			pl.DbItemActions.edit(id);
 		},
 
 		onDelete: function(sender,id) {
-		
-			var i = this.getDbItemIndex(id);
-			if ( i !== -1 ) {
-				pl.update(this, { dbItems: {$splice: [[i,1]]} });
-			}	
-
+			pl.DbItemActions.remove(id);
 			// TODO - Undo bar appears
 		},
 		
 		onSave: function(sender,id) {
 			
 			if (id == ADD_DB_ID) {
-				
-				var idSeq = this.state.idSeq;
-				
-				var newDb = this.refs.dbAddItem.getDb();
-				newDb.id = idSeq++;
-				
-				var newDbItem = { state: STATE_VIEW, db: newDb };
-			
-				pl.update(this, { idSeq: {$set: idSeq}, dbItems: {$push: [newDbItem]}});
+				pl.DbItemActions.add(sender.getDb());
 			}
 			else {
-				this.updateDbItem(id, function(dbItem) {
-					return pl.extend( dbItem, {state: STATE_VIEW, db: sender.getDb()} );
-				});
+				pl.DbItemActions.update(sender.getDb());
 			}
 		},
 		
@@ -86,9 +56,7 @@
 				sender.clear();
 			}
 			else {
-				this.updateDbItem(id, function(dbItem) {
-					return pl.extend( dbItem, {state: STATE_VIEW} );
-				});
+				pl.DbItemActions.cancelEdit(id);
 			}
 		},
 
@@ -99,19 +67,19 @@
 			var createDbItem = function(dbItem) {
 				
 				switch(dbItem.state) {
-					case STATE_VIEW:
+					case pl.DbItemStore.STATE_VIEW:
 						return <pl.DbItem key={dbItem.db.id} db={dbItem.db} onEdit={that.onEdit} onDelete={that.onDelete}/>;
-					case STATE_EDIT:
+					case pl.DbItemStore.STATE_EDIT:
 						return <pl.DbEditItem key={dbItem.db.id} db={dbItem.db} onSave={that.onSave} onCancel={that.onCancel}/>;
 					default:
-						console.log("warning: unsupported dbItem.state: " + dbItem.state);
+						console.log(TAG, "warning: unsupported dbItem.state: " + dbItem.state);
 						return;
 				}
 			};
 
 			return <div>
 				{this.state.dbItems.map(createDbItem)}
-				<pl.DbEditItem ref="dbAddItem" key={ADD_DB_ID} db={DEFAULT_ADD_DB} onSave={that.onSave} onCancel={that.onCancel}/>
+				<pl.DbEditItem key={ADD_DB_ID} db={DEFAULT_ADD_DB} onSave={that.onSave} onCancel={that.onCancel}/>
 			</div>;
 		}
 	});
