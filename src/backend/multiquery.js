@@ -12,48 +12,58 @@ let MultiQuery = function() {};
 * @param command.urls[] to use to execute the query
 * @param command.query sql query to execute
 */
-MultiQuery.prototype.query = function(command) {
-  return new Promise(function(resolve, reject){
+MultiQuery.prototype.query = command => {
+  return new Promise( (resolve, reject) => {
     let request_date = moment().unix();
 
     let results = [];
     let promises = [];
 
-    // TODO @pl promiseify
-    command.urls.forEach(function(url){
-        promises.push(connect_to_db(url).then(function(connection){
+    command.urls.forEach( url => {
+        promises.push(connect_to_db(url).then( connection => {
           return prepare_for_query(url, connection);
 
-        }).then(function(params){
+        }).then( params => {
           return query_db(
             params.connection,
             command.query,
             params.result
           );
 
-        }).then(function(params) {
+        }).then( params => {
           return transform_data(params.result_set, params.result);
 
-        }).then(function(result){
+        }).then( result => {
           return results.push(result);
-        }));
+
+        }).catch( error => {
+          results.push(transform_error(url, error));
+
+        })
+      );
     });
 
-    Promise.all(promises).then(function(){
+    Promise.all(promises).then(() => {
         resolve(results);
     });
   });
 };
 
 function connect_to_db(url) {
-  return new Promise(function(resolve, reject) {
-    let conn = anyDB.createConnection(url);
-    resolve(conn);
+  return new Promise( (resolve, reject) => {
+    let conn = anyDB.createConnection(url, (error) => {
+
+      if (error !== null) {
+        reject(error);
+      } else {
+        resolve(conn);
+      }
+    });
   });
 }
 
 function prepare_for_query(url, connection, query){
-  return new Promise(function(resolve, reject){
+  return new Promise( (resolve, reject) => {
     let result = {};
     result.url = url;
     result.execution_start_date = moment().unix();
@@ -66,8 +76,8 @@ function prepare_for_query(url, connection, query){
 }
 
 function query_db(conn, query, result){
-  return new Promise(function(resolve, reject){
-    conn.query(query, function(error, result_set) {
+  return new Promise( (resolve, reject) => {
+    conn.query(query, (error, result_set) => {
       result.execution_end_date = moment().unix();
       conn.end();
 
@@ -81,7 +91,7 @@ function query_db(conn, query, result){
 }
 
 function transform_data(result_set, result){
-  return new Promise(function(resolve, reject){
+  return new Promise( (resolve, reject) => {
     let fields_names = extract_resultset_field_names(result_set);
     result.fields = fields_names;
 
@@ -92,21 +102,28 @@ function transform_data(result_set, result){
 }
 
 function extract_resultset_field_names(result){
-  return result.fields.map(function(field){
+  return result.fields.map( field => {
     return field.name;
   });
 }
 
 function extract_resultset_values(result, fields_names) {
-  return result.rows.map(function(row){
+  return result.rows.map( row => {
     let obj = {};
 
-    fields_names.forEach(function(field_name){
+    fields_names.forEach( field_name => {
       obj[field_name] = row[field_name];
     });
 
     return obj;
   });
+}
+
+function transform_error(url, error){
+  return {
+    url: url,
+    error: error
+  };
 }
 
 module.exports = MultiQuery;
