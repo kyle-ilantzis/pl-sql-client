@@ -55,9 +55,11 @@ function connect_to_db(url) {
 
       if (error !== null) {
         reject(error);
-      } else {
-        resolve(conn);
+        return;
       }
+
+      resolve(conn);
+
     });
   });
 }
@@ -78,13 +80,20 @@ function prepare_for_query(url, connection, query){
 function query_db(conn, query, result){
   return new Promise( (resolve, reject) => {
     conn.query(query, (error, result_set) => {
+
       result.execution_end_date = moment().unix();
       conn.end();
+
+      if (error) {
+        reject(error);
+        return;
+      }
 
       resolve({
         result: result,
         result_set: result_set
       });
+
     });
   });
 
