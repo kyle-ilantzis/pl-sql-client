@@ -2,28 +2,33 @@
   "name": "pl-sql-client",
   "version": "0.0.1",
   "license": "GPL-3.0",
-
   "repository": "kyle-ilantzis/pl-sql-client",
-
   "dependencies": {
-	"any-db": "*",
-	"any-db-mysql": "*",
-	"any-db-postgres": "*",
-	"any-db-sqlite3": "*",
-	"nw": "^0.12.3",
-	"moment": "^2.4.0",
-  "react-tools": "^0.13.3"
+    "any-db": "*",
+    "any-db-mysql": "*",
+    "any-db-postgres": "*",
+    "any-db-sqlite3": "*",
+    "nw": "^0.12.3",
+    "moment": "^2.4.0",
+    "react-tools": "^0.13.3"
   },
 
   "main": "index.html",
-
   "scripts": {
-	"start": "nw .",
-	"prestart": "jsx --es6module src build"
-},
+    "start": "nw .",
+    "prestart": "jsx --es6module src build"
+  },
 
   "webkit": {
     "plugin": true
   },
-    "js-flags": "--harmony --harmony_arrow_functions"
+
+  "js-flags": "--harmony --harmony_arrow_functions",
+
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-less": "^3.0.3",
+    "gulp-jsx": "^2.0.0"
+  }
+
 }

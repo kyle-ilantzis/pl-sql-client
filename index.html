@@ -20,7 +20,7 @@
 
 <head>
 	<script src="app:/_/vendor/react/react-with-addons.js"></script>
-	
+
 	<script type="text/javascript" src="app:/_/build/scope/pl.js"></script>
 	<script type="text/javascript" src="app:/_/build/dispatcher/Dispatcher.js"></script>
 	<script type="text/javascript" src="app:/_/build/stores/DbTypes.js"></script>
@@ -38,12 +38,21 @@
 	<script type="text/javascript" src="app:/_/build/views/dblist/DbList.js"></script>
 	<script type="text/javascript" src="app:/_/build/views/App.js"></script>
 	<script type="text/javascript" src="app:/_/build/main.js"></script>
-	
+
 	<!-- TODO - a way to switch between light and dark theme in the app -->
 	<link href="app:/_/build/main-light.css" type="text/css" rel="stylesheet" />
 <head>
 <body>
 	<script type="text/javascript">
 		pl.main();
+	</script>
+
+	<script>
+	  var gulp = require('gulp');
+	  gulp.task('reload', function () {
+	    if (location) location.reload();
+	  });
+
+	  gulp.watch('build/*', ['reload']);
 	</script>
 </body>
