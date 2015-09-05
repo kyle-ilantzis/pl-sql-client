@@ -33,16 +33,31 @@
     
     var query = function(sql) {
         
-        console.log(TAG, sql);
+        var cmd = { 
+            urls: pl.DbItemStore.getDbUrls(),
+            query: sql
+        };
+        
+        console.log(TAG, "query cmd", cmd);
     
-        multiquery.query().then(function(result) {
-            
-            queryResult = result;
-            
-            console.log(TAG, queryResult);
-            
-            notify();
-        });
+        multiquery.query(cmd).then(
+            function(result) {
+                
+                queryResult = result;
+                
+                console.log(TAG, "query fufilled", queryResult);
+                
+                notify();
+            },
+            function(error) {
+                
+                queryResult = null;
+                
+                console.log(TAG, "query rejected", error);
+                
+                notify();
+            }
+        );
     };
     
     pl.Dispatcher.register(NAME, function(action) {

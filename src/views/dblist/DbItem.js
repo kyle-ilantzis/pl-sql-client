@@ -16,10 +16,10 @@
 			
 			var createItemFields = function(db) {
 				switch(db.dbType) {
-					case pl.DB_TYPE_MYSQL:
-					case pl.DB_TYPE_POSTGRES:
+					case pl.DbTypes.DB_TYPE_MYSQL:
+					case pl.DbTypes.DB_TYPE_POSTGRES:
 						return <pl.DbItemFields db={db}/>
-					case pl.DB_TYPE_SQLITE3:
+					case pl.DbTypes.DB_TYPE_SQLITE3:
 						return <pl.DbSqlite3ItemFields db={db}/>
 					default:
 						return;

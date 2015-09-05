@@ -21,7 +21,7 @@
 			};
 
 			return <select ref="select" onChange={this.onChange} defaultValue={this.props.dbType}>
-				{ pl.DB_TYPES.map(createOption) }
+				{ pl.DbTypes.DB_TYPES.map(createOption) }
 			</select>;
 		}
 	});
