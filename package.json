@@ -24,5 +24,6 @@
 
   "webkit": {
     "plugin": true
-  }
+  },
+    "js-flags": "--harmony --harmony_arrow_functions"
 }
