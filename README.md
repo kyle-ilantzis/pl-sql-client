@@ -2,10 +2,10 @@
 
 Query many database at once.
 
-# Installation
+# To start
 
-pl-sql-client is a [nwjs](https://github.com/nwjs/nw.js) app, 
-see nwjs for further details on how to run nwjs apps.
+ * npm install
+ * npm start
 
 # License
 
