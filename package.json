@@ -19,6 +19,10 @@
 
   "scripts": {
 	"start": "nw .",
-	"prestart": "jsx --es6module -x jsx src build"
+	"prestart": "jsx --es6module src build"
+},
+
+  "webkit": {
+    "plugin": true
   }
 }
