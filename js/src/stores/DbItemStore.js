@@ -17,6 +17,7 @@
 */
 
 (function(pl) {
+	var fs = require("fs");
 
 	var TAG = "DbItemStore:::";
 	var NAME = "DbItemStore";
@@ -55,13 +56,11 @@
 	
 	var load = function() {
 	
-		// TODO - Fetch the dbItems from disk/network/whatever
-		var mockDbs = [
-			{ host: "localhost", port: "3306", username:"", password: "", dbType: pl.DbTypes.DB_TYPE_MYSQL},
-			{ host: "localhost", port: "4545", username:"", password: "", dbType: pl.DbTypes.DB_TYPE_POSTGRES}
-		];
+		// FIXME - Need to load and also save to the userconfig, also the useconfig should be in another module
+		var userdbs = !fs.existsSync('userconfig.json') ? {} : JSON.parse( fs.readFileSync('userconfig.json', {encoding: 'utf8'}) );
+		var dbs = userdbs.databases || [];
 		
-		dbItems = mockDbs.map(function(db,i){	
+		dbItems = dbs.map(function(db,i){	
 				
 			var mappedDb = pl.extend({},db);
 			mappedDb.id = i;

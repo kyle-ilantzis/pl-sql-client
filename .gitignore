@@ -3,3 +3,4 @@ build/
 npm-debug.log
 .settings/
 gulpconfig.json
+userconfig.json
