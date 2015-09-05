@@ -5,7 +5,8 @@ Query many database at once.
 # To start
 
  * npm install
- * npm start
+ * npm install -g gulp
+ * gulp
 
 # License
 

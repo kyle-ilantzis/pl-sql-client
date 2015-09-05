@@ -12,23 +12,20 @@
     "moment": "^2.4.0",
     "react-tools": "^0.13.3"
   },
-
   "main": "index.html",
   "scripts": {
     "start": "nw .",
     "prestart": "jsx --es6module src build"
   },
-
   "webkit": {
     "plugin": true
   },
-
   "js-flags": "--harmony --harmony_arrow_functions",
-
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-less": "^3.0.3",
-    "gulp-jsx": "^2.0.0"
+    "gulp-react": "^3.0.1",
+    "gulp-shell": "^0.4.3",
+    "gulp-watch": "^4.3.5"
   }
-
 }
