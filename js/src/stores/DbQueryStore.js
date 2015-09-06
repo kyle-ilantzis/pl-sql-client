@@ -26,7 +26,7 @@
         QUERY: "DbQueryStore-QUERY"
     };
     
-    var queryResult = null;
+    var multiQueryResult = [];
     var multiquery = new MultiQuery();
     
     var notify = pl.observable(DbQueryStore);
@@ -36,25 +36,17 @@
         var cmd = { 
             urls: pl.DbItemStore.getDbUrls(),
             query: sql
-        };
-        
-        console.log(TAG, "query cmd", cmd);
+        };        
     
         multiquery.query(cmd).then(
             function(result) {
                 
-                queryResult = result;
-                
-                console.log(TAG, "query fufilled", queryResult);
-                
+                multiQueryResult = result;                
                 notify();
             },
             function(error) {
                 
-                queryResult = null;
-                
-                console.log(TAG, "query rejected", error);
-                
+                multiQueryResult = [];
                 notify();
             }
         );
@@ -72,8 +64,8 @@
     
     pl.DbQueryStore = pl.extend(DbQueryStore, {
         
-        getQueryResult: function() {
-            return queryResult;  
+        getMultiQueryResult: function() {
+            return multiQueryResult;  
         }
     });
 })(pl||{});
