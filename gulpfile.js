@@ -13,7 +13,8 @@ var nw = cfg.nw || './node_modules/nw/bin/nw';
 function less_theme(file){
   return gulp.src('./less/src/' + file + '.less')
     .pipe(less({
-      paths: [ bootstrap ]
+      paths: [ bootstrap ],
+      relativeUrls: true
     }))
     .pipe(gulp.dest('./build'));
 }
