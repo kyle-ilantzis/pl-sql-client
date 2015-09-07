@@ -9,7 +9,8 @@ let MultiQuery = function() {};
 
 /**
 * @param command to execute
-* @param command.urls[] to use to execute the query
+* @param command.urls[].url url to use to execute the query
+* @param command.urls[].id identifier of the database
 * @param command.query sql query to execute
 */
 MultiQuery.prototype.query = command => {
@@ -20,7 +21,7 @@ MultiQuery.prototype.query = command => {
     let promises = [];
 
     command.urls.forEach( url => {
-        promises.push(connect_to_db(url).then( connection => {
+        promises.push(connect_to_db(url.url).then( connection => {
           return prepare_for_query(url, connection);
 
         }).then( params => {
@@ -31,7 +32,7 @@ MultiQuery.prototype.query = command => {
           );
 
         }).then( params => {
-          return transform_data(params.result_set, params.result);
+          return transform_data(url, params.result_set, params.result);
 
         }).then( result => {
           return results.push(result);
@@ -55,10 +56,9 @@ function connect_to_db(url) {
 
       if (error !== null) {
         reject(error);
-        return;
+      } else {
+        resolve(conn);
       }
-
-      resolve(conn);
 
     });
   });
@@ -67,7 +67,10 @@ function connect_to_db(url) {
 function prepare_for_query(url, connection, query){
   return new Promise( (resolve, reject) => {
     let result = {};
-    result.url = url;
+
+    result.id = url.id;
+    result.url = url.url;
+
     result.execution_start_date = moment().unix();
 
     resolve({
@@ -99,7 +102,7 @@ function query_db(conn, query, result){
 
 }
 
-function transform_data(result_set, result){
+function transform_data(id, result_set, result){
   return new Promise( (resolve, reject) => {
     let fields_names = extract_resultset_field_names(result_set);
     result.fields = fields_names;
@@ -130,7 +133,8 @@ function extract_resultset_values(result, fields_names) {
 
 function transform_error(url, error){
   return {
-    url: url,
+    id: url.id,
+    url: url.url,
     error: error
   };
 }
