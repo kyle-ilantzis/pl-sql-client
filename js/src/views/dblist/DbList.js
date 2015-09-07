@@ -3,7 +3,7 @@
 	var TAG = "DbList:::";
 
 	var ADD_DB_ID = "add";
-	
+
 	var DEFAULT_ADD_DB = {
 		id: ADD_DB_ID,
 		dbType: pl.DbTypes.DB_TYPE_MYSQL,
@@ -14,23 +14,23 @@
 	};
 
 	var DbList = React.createClass({
-		
+
 		getInitialState: function() {
 			return { dbItems: pl.DbItemStore.getDbItems() };
 		},
-		
+
 		componentDidMount: function() {
 			pl.DbItemStore.addChangeListener(this.onChange);
 		},
-		
+
 		componentWillUnmount: function() {
 			pl.DbItemStore.removeChangeListener(this.onChange);
 		},
-		
+
 		onChange: function() {
 			pl.updateState(this, { dbItems: {$set: pl.DbItemStore.getDbItems()} });
 		},
-		
+
 		onEdit: function(sender,id) {
 			pl.DbItemActions.edit(id);
 		},
@@ -39,9 +39,9 @@
 			pl.DbItemActions.remove(id);
 			// TODO - Undo bar appears
 		},
-		
+
 		onSave: function(sender,id) {
-			
+
 			if (id == ADD_DB_ID) {
 				pl.DbItemActions.add(sender.getDb());
 			}
@@ -49,9 +49,9 @@
 				pl.DbItemActions.update(sender.getDb());
 			}
 		},
-		
+
 		onCancel: function(sender,id) {
-		
+
 			if (id == ADD_DB_ID) {
 				sender.clear();
 			}
@@ -65,7 +65,7 @@
 			var that = this;
 
 			var createDbItem = function(dbItem) {
-				
+
 				switch(dbItem.state) {
 					case pl.DbItemStore.STATE_VIEW:
 						return <pl.DbItem key={dbItem.db.id} db={dbItem.db} onEdit={that.onEdit} onDelete={that.onDelete}/>;
@@ -83,6 +83,6 @@
 			</div>;
 		}
 	});
-	
+
 	pl.DbList = DbList;
 })(pl||{});

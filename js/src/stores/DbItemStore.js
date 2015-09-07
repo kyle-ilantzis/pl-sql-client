@@ -18,145 +18,159 @@
 
 (function(pl) {
 	var fs = require("fs");
+	var Config = require('./build/backend/config.js');
+	var gui = require('nw.gui');
 
 	var TAG = "DbItemStore:::";
 	var NAME = "DbItemStore";
 
+	var config = new Config({
+		directory: gui.App.dataPath,
+		file: 'config.json'
+	});
+
 	var DbItemStore = {
-		
+
 		LOAD: "DbItemStore-LOAD",
-		
+
 		EDIT: "DbItemStore-EDIT",
 		CANCEL_EDIT: "DbItemStore-CANCEL_EDIT",
 		ADD: "DbItemStore-ADD",
 		UPDATE: "DbItemStore-UDPATE",
 		DELETE: "DbItemStore-DELETE",
-			
+
 		STATE_VIEW: "DbItemStore-STATE_VIEW",
 		STATE_EDIT: "DbItemStore-STATE_EDIT"
-	}
+	};
 
 	var idSeq;
-	var dbItems = null;
-	
+	var dbItems = [];
+
 	var notify = pl.observable(DbItemStore);
-	
-	var getDbItemIndex = function(id) {		
+
+	var getDbItemIndex = function(id) {
 		return pl.findIndex(dbItems, function(dbItem) { return dbItem.db.id === id; });
 	};
-		
+
 	var updateDbItem = function(id, f) {
-	
+
 		var i = getDbItemIndex(id);
 		if ( i !== -1 ) {
 			var newDbItem = f( pl.extend({},dbItems[i]) );
 			dbItems = pl.update(dbItems, {$splice: [[i,1,newDbItem]]});
-		}				
+		}
 	};
-	
+
 	var load = function() {
-	
-		// FIXME - Need to load and also save to the userconfig, also the useconfig should be in another module
-		var userdbs = !fs.existsSync('userconfig.json') ? {} : JSON.parse( fs.readFileSync('userconfig.json', {encoding: 'utf8'}) );
-		var dbs = userdbs.databases || [];
-		
-		dbItems = dbs.map(function(db,i){	
-				
-			var mappedDb = pl.extend({},db);
-			mappedDb.id = i;
-		
-			return { state: DbItemStore.STATE_VIEW, db: mappedDb };
+
+		config.load().then(function(readConfig){
+			return readConfig;
+
+		}).catch(function(err){
+				console.log('Error while loading config. Initializing to empty.');
+				console.log(err);
+				return {};
+
+		}).then(function(config){
+			var dbs = config.databases || [];
+
+			dbItems = dbs.map(function(db,i){
+				var mappedDb = pl.extend({},db);
+				mappedDb.id = i;
+
+				return { state: DbItemStore.STATE_VIEW, db: mappedDb };
+			});
+
+			idSeq = dbItems.length === 0 ? 0 : dbItems[dbItems.length-1].db.id + 1;
+			notify();
 		});
- 		
-		idSeq = dbItems.length == 0 ? 0 : dbItems[dbItems.length-1].db.id + 1;
-		
-		notify();
+
 	};
-	
+
 	var edit = function(id) {
-		
+
 		updateDbItem(id, function(dbItem) {
 			return pl.extend( dbItem, {state: DbItemStore.STATE_EDIT} );
 		});
-		
+
 		notify();
 	};
-	
+
 	var cancelEdit = function(id) {
-		
+
 		updateDbItem(id, function(dbItem) {
 			return pl.extend( dbItem, {state: DbItemStore.STATE_VIEW} );
 		});
-		
+
 		notify();
 	};
-	
+
 	var add = function(db) {
-		
+
 		db.id = idSeq++;
 
 		var newDbItem = { state: DbItemStore.STATE_VIEW, db: db };
-	
+
 		dbItems = pl.update(dbItems, {$push: [newDbItem]});
-		
+
 		notify();
 	};
-	
+
 	var update = function(db) {
-		
+
 		updateDbItem(db.id, function(dbItem) {
 			return pl.extend( dbItem, {state: DbItemStore.STATE_VIEW, db: db} );
 		});
-		
+
 		notify();
 	};
-	
+
 	var remove = function(id) {
-		
+
 		var i = getDbItemIndex(id);
 		if ( i !== -1 ) {
 			dbItems = pl.update(dbItems, {$splice: [[i,1]]});
 		}
-		
-		notify();	
+
+		notify();
 	};
-	
+
 	pl.Dispatcher.register(NAME, function(action) {
-		
+
 		switch(action.actionType) {
-			
+
 			case DbItemStore.LOAD:
 				load();
 				break;
-				
+
 			case DbItemStore.EDIT:
 				edit(action.id);
 				break;
-				
+
 			case DbItemStore.CANCEL_EDIT:
 				cancelEdit(action.id);
 				break;
-				
+
 			case DbItemStore.ADD:
 				add(action.db);
 				break;
-				
+
 			case DbItemStore.UPDATE:
 				update(action.db);
 				break;
-				
+
 			case DbItemStore.DELETE:
 				remove(action.id);
 				break;
 		}
 	});
-	
+
 	pl.DbItemStore = pl.extend(DbItemStore, {
-			
+
 		getDbItems: function() {
 			return dbItems;
 		},
-		
+
 		getDbUrls: function() {
 			return dbItems.map(function(dbItem) {
 				return pl.DbTypes.toUrl(dbItem.db);
