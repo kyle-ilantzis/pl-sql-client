@@ -5,6 +5,9 @@
 		render: function() {
 			
 			return <div className="app">
+			
+				<pl.DbMultiQuery/>
+				
 				<pl.DbList/>
 			</div>
 		}
