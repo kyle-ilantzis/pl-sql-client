@@ -20,20 +20,36 @@
 	
 	pl.DbInputSql = React.createClass({
 		
-		mixins: [React.addons.LinkedStateMixin],
+		editor: null,
 		
-		getInitialState: function() {
-			return {sql: "SELECT * FROM MIRAPPSUSERS"};	
+		componentDidMount: function() {
+			
+			editor = ace.edit(this.refs.editor.getDOMNode());
+			// FIXME - if pl-sql-client dark theme then use ace chaos theme
+			editor.setTheme("ace/theme/sqlserver");
+			editor.getSession().setMode("ace/mode/sql");
+			
+			jQuery(".editor-wrap", this.getDOMNode()).resizable({
+				resize: function() { editor.resize(); }
+			});
+		},
+		
+		componentWillUnmount: function() {
+			if (editor) { editor.destroy(); }
 		},
 		
 		onClick: function() {
-			pl.DbQueryActions.query(this.state.sql);
+			pl.DbQueryActions.query(editor.getValue());
 		},
 		
 		render: function() {
 			
-			return <div>
-				<textarea valueLink={this.linkState('sql')}></textarea>
+			return <div className="DbInputSql">
+				
+				<div className="editor-wrap">
+					<div ref="editor" className="editor"></div>
+				</div>
+				
 				<button onClick={this.onClick}>Go</button>
 			</div>;
 		}
