@@ -9,9 +9,9 @@ let path = require('path');
 
 const ENCODING = 'utf8';
 const CONFIG_FOLDER = gui.App.dataPath;
-const CONFIG_PATH = './conf';
+const CONFIG_FILE = 'config.json';
 
-const CONFIG_FILE_PATH = path.join(CONFIG_FOLDER, CONFIG_PATH);
+const CONFIG_FILE_PATH = path.join(CONFIG_FOLDER, CONFIG_FILE);
 
 let Config = function() {};
 
