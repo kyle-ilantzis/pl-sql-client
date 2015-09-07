@@ -29,7 +29,8 @@
 			editor.setTheme("ace/theme/sqlserver");
 			editor.getSession().setMode("ace/mode/sql");
 			
-			jQuery(".editor-wrap", this.getDOMNode()).resizable({
+			jQuery(".editor-wrap", this.getDOMNode()).resizable({				
+				handles: "s",
 				resize: function() { editor.resize(); }
 			});
 		},
@@ -50,7 +51,9 @@
 					<div ref="editor" className="editor"></div>
 				</div>
 				
-				<button onClick={this.onClick}>Go</button>
+				<div className="run-query-btn-wrap">
+					<button className="run-query-btn" onClick={this.onClick}>Run Query</button>
+				</div>
 			</div>;
 		}
 	});

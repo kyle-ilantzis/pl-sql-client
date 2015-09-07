@@ -1,19 +1,32 @@
 .DbInputSql {    
 	
+	margin-top: @small-spacer;
+	margin-bottom: @small-spacer;
+	
 	.editor-wrap {
 		
 		width: @editor-width;
+		min-height: @editor-min-height;
 		height: @editor-height;
 		
-		border: lighten(@color, 30%) 1px solid;
+		border: lighten(@color, 30%) 1px solid;		
 		
 		.editor { 
 			width: 100%;
 			height: 100%;
 		}
+	}
+	
+	.run-query-btn-wrap {
 		
-		.ui-icon-gripsmall-diagonal-se {
-			.glyphicon-flash();
+		.clearfix();
+		
+		margin-top: @small-spacer;
+		
+		.run-query-btn {
+			.btn();
+			.btn-primary();			
+			.pull-right();
 		}
 	}
 }

@@ -26,6 +26,10 @@
 			
 			var that = this;
 			
+			var key = function(i) {
+				return that.props.queryResult.id + "_" + i;
+			}
+			
 			var createTable = function() {
 				
 				return <table>				
@@ -37,7 +41,7 @@
 			var createHeader = function() {
 				
 				var createHeaderField = function(field,i) {
-					return <th key={i}>{field}</th>;
+					return <th key={key(i)}>{field}</th>;
 				}
 				
 				return <tr>
@@ -51,23 +55,21 @@
 					return that.props.queryResult.fields.map(function(field) { 
 						return value[field];
 					});
-				});				
-				
-				console.log(rows);
+				});
 				
 				var createRowData = function(data,i) {
-					return <td key={i}>{String(data)}</td>;
+					return <td key={key(i)}>{String(data)}</td>;
 				}
 				
 				return rows.map(function(row,i) {
-					return <tr key={i}>
+					return <tr key={key(i)}>
 						{row.map(createRowData)}
 					</tr>;
 				});
 			};
 			
 			
-			return <div>
+			return <div className="DbQuery">
 				{createTable()}
 			</div>;
 		}

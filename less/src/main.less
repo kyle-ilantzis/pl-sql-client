@@ -19,7 +19,9 @@
 @import "bootstrap";
 
 @spacer: 2em;
-@editor-width: 200px;
+@small-spacer: @spacer/2;
+@editor-width: 100%;
+@editor-min-height: 125px;
 @editor-height: 200px;
 
 body {
@@ -29,3 +31,5 @@ body {
 
 @import "views/App.less";
 @import "views/dbmultiquery/DbInputSql.less";
+@import "views/dbmultiquery/DbError.less";
+@import "views/dbmultiquery/DbQuery.less";

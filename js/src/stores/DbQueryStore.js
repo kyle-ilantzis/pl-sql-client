@@ -26,7 +26,8 @@
         QUERY: "DbQueryStore-QUERY"
     };
     
-    var multiQueryResult = [];
+    var multiQueryIdSeq = 0;
+    var multiQueryResult = { id: 0, results: [] };
     var multiquery = new MultiQuery();
     
     var notify = pl.observable(DbQueryStore);
@@ -41,7 +42,13 @@
         multiquery.query(cmd).then(
             function(result) {
                 
-                multiQueryResult = result;                
+                var nextId = String(multiQueryIdSeq++);
+                
+                result.forEach(function(queryResult, i) {
+                    queryResult.id = nextId + "_" + i;     
+                });
+                
+                multiQueryResult = { id:  nextId, results: result };
                 notify();
             },
             function(error) {
