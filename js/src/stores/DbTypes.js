@@ -31,10 +31,10 @@
 			switch(db.dbType) {
 			
 				case DB_TYPE_MYSQL:
-					return url(MYSQL_DRIVER, db.host, db.port, db.database, db.user, db.password);
+					return url(MYSQL_DRIVER, db.host, db.port, db.scheme, db.user, db.password);
 				
 				case DB_TYPE_POSTGRES:
-					return url(POSTGRES_DRIVER, db.host, db.port, db.database, db.user, db.password);
+					return url(POSTGRES_DRIVER, db.host, db.port, db.scheme, db.user, db.password);
 				
 				case DB_TYPE_SQLITE3:
 					return SQLITE3_DRIVER + "://" + db.path;

@@ -28,6 +28,12 @@
 		
 			return <div className="DbItem">
 			
+				<div  className="DbType">
+					<div>
+						<div>{this.props.db.dbType}</div>
+					</div>
+				</div>
+			
 				{createItemFields(this.props.db)}
 				
 				<div className="DbItemActions">

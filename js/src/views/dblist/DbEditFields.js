@@ -8,6 +8,7 @@
 			return {
 				host: this.props.db.host,
 				port: this.props.db.port,
+				scheme: this.props.db.scheme,
 				user: this.props.db.user,
 				password: this.props.db.password
 			};
@@ -32,6 +33,12 @@
 					<div>
 						<label>Port</label>
 						<input type="text" valueLink={this.linkState('port')}/>
+					</div>
+				</div>
+				<div className="DbEditFieldsGroup">
+					<div>
+						<label>Scheme</label>
+						<input type="text" valueLink={this.linkState('scheme')}/>
 					</div>
 				</div>
 				<div className="DbEditFieldsGroup">
