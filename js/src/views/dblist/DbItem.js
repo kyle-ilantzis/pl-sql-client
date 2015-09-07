@@ -26,10 +26,14 @@
 				}
 			};
 		
-			return <div>
+			return <div className="DbItem">
+			
 				{createItemFields(this.props.db)}
-				<a href="#" onClick={this.onEdit}>E</a>
-				<a href="#" onClick={this.onDelete}>D</a>
+				
+				<div className="DbItemActions">
+					<button className="Edit" onClick={this.onEdit}>Edit</button>
+					<button className="Cancel" onClick={this.onDelete}>Delete</button>
+				</div>
 			</div>;
 		}
 	});

@@ -47,11 +47,18 @@
 				}
 			};
 			
-			return <div>
-				<pl.DbTypeSpinner ref="dbTypeSpinner" dbType={this.state.db.dbType} onChange={this.onDbTypeChange}/>
+			return <div className="DbEditItem">
+				
+				<div className="DbEditFieldsGroup">
+					<pl.DbTypeSpinner ref="dbTypeSpinner" dbType={this.state.db.dbType} onChange={this.onDbTypeChange}/>
+				</div>
+				
 				{ createDbEditFields(this.state.db) }
-				<a href="#" onClick={this.onSave}>S</a>
-				<a href="#" onClick={this.onCancel}>C</a>
+				
+				<div className="DbEditItemActions">
+					<button className="Save" onClick={this.onSave}>Save</button>
+					<button className="Cancel" onClick={this.onCancel}>Cancel</button>
+				</div>
 			</div>;
 		}
 	});

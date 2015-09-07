@@ -4,8 +4,8 @@
 		
 		render: function() {
 		
-			return <div>
-				<div>
+			return <div className="DbSqlite3ItemFields">
+				<div className="DbItemFieldsGroup">
 					<div>Path</div>
 					<div>{this.props.db.path}</div>
 				</div>

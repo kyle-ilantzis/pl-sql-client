@@ -20,9 +20,11 @@
 				return <option key={i}>{db}</option>;
 			};
 
-			return <select ref="select" onChange={this.onChange} defaultValue={this.props.dbType}>
-				{ pl.DbTypes.DB_TYPES.map(createOption) }
-			</select>;
+			return <div className="DbTypeSpinner"> 
+				<select ref="select" defaultValue={this.props.dbType} onChange={this.onChange} >
+					{ pl.DbTypes.DB_TYPES.map(createOption) }
+				</select>
+			</div>;
 		}
 	});
 	

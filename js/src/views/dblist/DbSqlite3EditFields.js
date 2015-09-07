@@ -16,7 +16,7 @@
 	
 		render: function() {
 			
-			return <div>
+			return <div className="DbSqlite3EditFields">
 				<div>
 					<label>Path</label>
 					<input ref="path" name="path" type="text" valueLink={this.linkState('path')}/>
