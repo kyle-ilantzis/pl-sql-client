@@ -8,8 +8,9 @@
     "any-db-mysql": "*",
     "any-db-postgres": "*",
     "any-db-sqlite3": "*",
-    "nw": "^0.12.3",
+    "mkdirp": "^0.5.1",
     "moment": "^2.4.0",
+    "nw": "^0.12.3",
     "react-tools": "^0.13.3"
   },
   "main": "index.html",
