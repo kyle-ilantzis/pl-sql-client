@@ -24,10 +24,12 @@
 	var TAG = "DbItemStore:::";
 	var NAME = "DbItemStore";
 
-	var config = new Config({
+	var configApi = new Config({
 		directory: gui.App.dataPath,
 		file: 'config.json'
 	});
+
+	var config = {};
 
 	var DbItemStore = {
 
@@ -63,7 +65,7 @@
 
 	var load = function() {
 
-		config.load().then(function(readConfig){
+		configApi.load().then(function(readConfig){
 			return readConfig;
 
 		}).catch(function(err){
@@ -71,7 +73,9 @@
 				console.log(err);
 				return {};
 
-		}).then(function(config){
+		}).then(function(readConfig){
+			config = readConfig;
+
 			var dbs = config.databases || [];
 
 			dbItems = dbs.map(function(db,i){
@@ -98,10 +102,6 @@
 
 	var cancelEdit = function(id) {
 
-		updateDbItem(id, function(dbItem) {
-			return pl.extend( dbItem, {state: DbItemStore.STATE_VIEW} );
-		});
-
 		notify();
 	};
 
@@ -113,6 +113,8 @@
 
 		dbItems = pl.update(dbItems, {$push: [newDbItem]});
 
+		saveConfiguration();
+
 		notify();
 	};
 
@@ -122,8 +124,25 @@
 			return pl.extend( dbItem, {state: DbItemStore.STATE_VIEW, db: db} );
 		});
 
+		saveConfiguration();
+
 		notify();
 	};
+
+	function saveConfiguration() {
+
+		dbConfig = dbItems.map(function(dbItem){
+			return dbItem.db;
+		});
+
+		config.databases = dbConfig;
+
+		configApi.save(config).catch(function(err){
+			alert('Error while saving cofiguration');
+			console.log('Error while saving configuration:');
+			console.log(err);
+		});
+	}
 
 	var remove = function(id) {
 
@@ -131,6 +150,8 @@
 		if ( i !== -1 ) {
 			dbItems = pl.update(dbItems, {$splice: [[i,1]]});
 		}
+
+		saveConfiguration();
 
 		notify();
 	};
