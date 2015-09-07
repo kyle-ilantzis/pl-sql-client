@@ -34,13 +34,16 @@ gulp.task('jsx', function(){
         .pipe(gulp.dest('build'));
 });
 
-gulp.task('start', shell.task([
+gulp.task('serve', shell.task([
   nw + ' . --debug'
 ]));
 
 gulp.task('watch', function(){
+  console.log('watching you');
   gulp.watch('./js/src/**', ['jsx']);
   gulp.watch('./less/src/**', ['theme']);
 });
 
-gulp.task('default', ['theme', 'jsx', 'watch', 'start']);
+gulp.task('start', ['theme', 'jsx', 'watch', 'serve']);
+
+gulp.task('default', ['start']);

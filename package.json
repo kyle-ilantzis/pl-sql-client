@@ -15,8 +15,7 @@
   },
   "main": "index.html",
   "scripts": {
-    "start": "nw .",
-    "prestart": "jsx --es6module src build"
+    "start": "gulp"
   },
   "webkit": {
     "plugin": true
