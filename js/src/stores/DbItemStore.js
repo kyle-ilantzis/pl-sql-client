@@ -17,7 +17,6 @@
 */
 
 (function(pl) {
-	var fs = require("fs");
 	var Config = require('./build/backend/config.js');
 	var gui = require('nw.gui');
 
@@ -69,8 +68,8 @@
 			return readConfig;
 
 		}).catch(function(err){
-				console.log('Error while loading config. Initializing to empty.');
-				console.log(err);
+				console.log(TAG, 'Error while loading config. Initializing to empty.');
+				console.log(TAG, err);
 				return {};
 
 		}).then(function(readConfig){
@@ -101,6 +100,10 @@
 	};
 
 	var cancelEdit = function(id) {
+
+		updateDbItem(id, function(dbItem) {
+			return pl.extend( dbItem, {state: DbItemStore.STATE_VIEW} );
+		});
 
 		notify();
 	};
@@ -139,8 +142,8 @@
 
 		configApi.save(config).catch(function(err){
 			alert('Error while saving cofiguration');
-			console.log('Error while saving configuration:');
-			console.log(err);
+			console.log(TAG, 'Error while saving configuration:');
+			console.log(TAG, err);
 		});
 	}
 
