@@ -22,8 +22,14 @@
 		
 		render: function() {
 			
-			return <div>
-				<div>{this.props.error.message}</div>
+			return <div className="DbError">
+            
+                <div className="DbErrorUrl">{this.props.queryResult.url}</div>
+                
+                <div className="DbErrorMsg">
+                    <span className="DbErrorIcon"></span>
+                    {this.props.queryResult.error.message}
+                </div>
 			</div>;
 		}
 	});

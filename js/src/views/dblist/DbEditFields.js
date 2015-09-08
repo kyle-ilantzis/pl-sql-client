@@ -8,6 +8,7 @@
 			return {
 				host: this.props.db.host,
 				port: this.props.db.port,
+				scheme: this.props.db.scheme,
 				user: this.props.db.user,
 				password: this.props.db.password
 			};
@@ -23,22 +24,32 @@
 		
 		render: function() {
 		
-			return <div>
-				<div>
-					<label>Host</label>
-					<input type="text" valueLink={this.linkState('host')}/>
+			return <div className="DbEditFields">
+				<div className="DbEditFieldsGroup">
+					<div>
+						<label>Host</label>
+						<input type="text" valueLink={this.linkState('host')}/>
+					</div>
+					<div>
+						<label>Port</label>
+						<input type="text" valueLink={this.linkState('port')}/>
+					</div>
 				</div>
-				<div>
-					<label>Port</label>
-					<input type="text" valueLink={this.linkState('port')}/>
+				<div className="DbEditFieldsGroup">
+					<div>
+						<label>Scheme</label>
+						<input type="text" valueLink={this.linkState('scheme')}/>
+					</div>
 				</div>
-				<div>
-					<label>User</label>
-					<input type="text" valueLink={this.linkState('user')}/>
-				</div>
-				<div>
-					<label>Password</label>
-					<input type="text" valueLink={this.linkState('password')}/>
+				<div className="DbEditFieldsGroup">
+					<div>
+						<label>User</label>
+						<input type="text" valueLink={this.linkState('user')}/>
+					</div>
+					<div>
+						<label>Password</label>
+						<input type="text" valueLink={this.linkState('password')}/>
+					</div>
 				</div>
 			</div>
 		}

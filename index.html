@@ -20,6 +20,9 @@
 
 <head>
 	<script src="app:/_/vendor/react/react-with-addons.js"></script>
+	<script src="app:/_/vendor/ace-builds-1.2.0/src-noconflict/ace.js"></script>
+	<script src="app:/_/vendor/jquery-ui-1.11.4/external/jquery/jquery.js"></script>
+	<script src="app:/_/vendor/jquery-ui-1.11.4/jquery-ui.js"></script>
 
 	<script type="text/javascript" src="app:/_/build/scope/pl.js"></script>
 	
@@ -51,10 +54,14 @@
 	<script type="text/javascript" src="app:/_/build/main.js"></script>
 
 	<!-- TODO - a way to switch between light and dark theme in the app -->
+	<link href="app:/_/vendor/jquery-ui-1.11.4/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<link href="app:/_/build/main-light.css" type="text/css" rel="stylesheet" />
 <head>
 <body>
 	<script type="text/javascript">
+		
+		$.noConflict();
+		
 		pl.main();
 	</script>
 

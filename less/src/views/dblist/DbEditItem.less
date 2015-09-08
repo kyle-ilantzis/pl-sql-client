@@ -1,0 +1,63 @@
+.DbEditItem {
+			
+	.make-xs-column(12);
+	
+	margin-bottom: @spacer;
+}
+
+.DbEditFieldsGroup {
+	.make-row();
+	
+	&> div {
+		
+		.make-xs-column(12);
+		.make-sm-column(6);
+		
+		.form-group();
+		
+		input {
+			.form-control();
+		}
+	}
+}
+
+.DbTypeSpinner {
+	.pull-right();
+	
+	padding-right: 0;
+	
+	.form-group();
+	
+	select {
+		.form-control();
+	}
+}
+
+.DbSqlite3EditFields {
+	&>div {
+		.make-xs-column(12);
+		.form-group();
+	}
+	
+	input {
+		.form-control();
+	}
+}
+
+.DbEditItemActions {
+	.make-xs-column(12);
+	
+	.Save {
+		.pull-right();
+		.btn();
+		.btn-primary();
+		
+		margin-left: @small-spacer;
+		margin-right: -@grid-gutter-width/2;
+	}
+	
+	.Cancel {
+		.pull-right();
+		.btn();
+	}
+}

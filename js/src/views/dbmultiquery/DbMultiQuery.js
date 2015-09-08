@@ -35,26 +35,26 @@
 		},
 		
 		onChange: function() {
-			console.log("on change");
 			pl.updateState(this, { multiQueryResult: {$set: pl.DbQueryStore.getMultiQueryResult()} });
 		},
 		
 		render: function() {
 			
-			console.log(TAG, "render");
-			
 			var that = this;
 			
+			var key = function(i) {
+				return that.state.multiQueryResult.id + "_" + i;
+			}
+			
 			var createDbQuery = function(queryResult,i) {
-				console.log(TAG, "render", "createDbQuery");
 				return queryResult.error ?
-						 <pl.DbError key={i} error={queryResult.error}/>:
-						 <pl.DbQuery key={i} queryResult={queryResult}/>;
+						 <pl.DbError key={key(i)} queryResult={queryResult}/>:
+						 <pl.DbQuery key={key(i)} queryResult={queryResult}/>;
 			};
 			
 			return <div>
 				<pl.DbInputSql/>
-				{this.state.multiQueryResult.map(createDbQuery)}
+				{this.state.multiQueryResult.results.map(createDbQuery)}
 			</div>;
 		}
 	});

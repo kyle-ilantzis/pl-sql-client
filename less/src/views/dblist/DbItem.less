@@ -1,0 +1,70 @@
+.DbItem {
+			
+	.make-xs-column(12);
+	
+	margin-bottom: @spacer;
+	
+	.DbType {
+		.make-row();
+		
+		padding-right: @grid-gutter-width/2;
+		
+		text-align: right;
+		font-weight: bold;
+	}
+}
+
+.DbItemFieldsGroup {
+	.make-row();
+}
+
+.DbItemField {
+	
+	.make-xs-column(12);
+	.make-sm-column(6);
+		
+	margin-bottom: @small-spacer;
+		
+	div:first-child {
+		font-weight: bold;
+		margin-bottom: @small-spacer;
+	}
+	
+	div:nth-child(2n) {
+		
+		border-bottom: lighten(@color, 30%) 1px solid;
+		
+		&:empty {
+			&:after {
+				content: @nbsp;
+			}
+		}
+	}
+		
+	&> div {		
+		.make-xs-column(12);
+	}
+}
+
+.DbSqlite3ItemFields .DbItemFieldsGroup .DbItemField {
+	.make-sm-column(12);
+}
+
+.DbItemActions {
+	.make-xs-column(12);
+	
+	.Edit {
+		.pull-right();
+		.btn();
+		.btn-primary();
+		
+		margin-left: @small-spacer;
+		margin-right: -@grid-gutter-width/2;
+	}
+	
+	.Cancel {
+		.pull-right();
+		.btn();
+		.btn-danger();
+	}
+}

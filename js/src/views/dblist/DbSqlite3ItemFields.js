@@ -4,10 +4,12 @@
 		
 		render: function() {
 		
-			return <div>
-				<div>
-					<div>Path</div>
-					<div>{this.props.db.path}</div>
+			return <div className="DbSqlite3ItemFields">
+				<div className="DbItemFieldsGroup">
+					<div className="DbItemField">
+						<div>Path</div>
+						<div>{this.props.db.path}</div>
+					</div>
 				</div>
 			</div>
 		}
