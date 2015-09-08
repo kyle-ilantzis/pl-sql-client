@@ -2,6 +2,8 @@
 
 "use strict";
 
+const TAG = "MultiQuery:::";
+
 let moment = require('moment');
 let anyDB = require('any-db');
 
@@ -14,6 +16,8 @@ let MultiQuery = function() {};
 * @param command.query sql query to execute
 */
 MultiQuery.prototype.query = command => {
+  console.log(TAG, command);
+
   return new Promise( (resolve, reject) => {
     let request_date = moment().unix();
 

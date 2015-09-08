@@ -197,7 +197,10 @@
 
 		getDbUrls: function() {
 			return dbItems.map(function(dbItem) {
-				return pl.DbTypes.toUrl(dbItem.db);
+				return {
+					id: dbItem.id,
+					url: pl.DbTypes.toUrl(dbItem.db)
+				};
 			});
 		}
 	});
