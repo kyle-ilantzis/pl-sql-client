@@ -2,22 +2,34 @@
 
 "use strict";
 
-let gui = require('nw.gui');
 let fs = require('fs');
 let mkdirp = require('mkdirp');
 let path = require('path');
 
-const ENCODING = 'utf8';
-const CONFIG_FOLDER = gui.App.dataPath;
-const CONFIG_FILE = 'config.json';
+const DEFAULT_CONFIG_FOLDER = '.';
+const DEFAULT_CONFIG_FILE = 'config.json';
+const DEFAULT_ENCODING = 'utf8';
 
-const CONFIG_FILE_PATH = path.join(CONFIG_FOLDER, CONFIG_FILE);
+/**
+ * opts.directory = config file to load, default to .
+ * opts.file = config file to load, default to config.json
+ * opts.configEncoding = encoding to use, default to utf8
+ */
+let Config = function(opts) {
+  let directory = opts.directory || DEFAULT_CONFIG_FOLDER;
+  let file = opts.file || DEFAULT_CONFIG_FILE;
+  let encoding = opts.configEncoding || DEFAULT_ENCODING;
 
-let Config = function() {};
+  this.configDirectoryPath = directory;
+  this.configFilePath = path.join(directory, file);
+  this.configEncoding = encoding;
+};
 
 Config.prototype.load = () => {
+  let that = this;
+
   return new Promise( (resolve, reject) => {
-    fs.readFile(CONFIG_FILE_PATH, ENCODING, function(err, data){
+    fs.readFile(that.configFilePath, that.configEncoding, function(err, data){
       if (err){
         reject(err);
       } else {
@@ -29,14 +41,16 @@ Config.prototype.load = () => {
 
 
 Config.prototype.save = (config) => {
-  return create_config_folder().then(() => {
-    return write_config(config);
+  var that = this;
+
+  return create_config_folder(that.configDirectoryPath).then(() => {
+    return write_config(that.configFilePath, that.configEncoding, config);
   });
 };
 
-function create_config_folder(){
+function create_config_folder(path){
   return new Promise( (resolve, reject) => {
-    mkdirp(CONFIG_FOLDER, function(err){
+    mkdirp(path, function(err){
       if (err) {
         reject(err);
       } else {
@@ -46,11 +60,11 @@ function create_config_folder(){
   });
 }
 
-function write_config(obj){
+function write_config(path, encoding, obj){
   return new Promise( (resolve, reject) => {
     let stringified = JSON.stringify(obj, null, 2);
 
-    fs.writeFile(CONFIG_FILE_PATH, stringified, ENCODING, function(err){
+    fs.writeFile(path, stringified, encoding, (err) => {
       if (err){
         reject(err);
       } else {
