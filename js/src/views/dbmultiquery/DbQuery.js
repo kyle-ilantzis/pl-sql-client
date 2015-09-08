@@ -70,6 +70,9 @@
 			
 			
 			return <div className="DbQuery">
+				
+				<div className="DbQueryUrl">{this.props.queryResult.url}</div>
+			
 				{createTable()}
 			</div>;
 		}

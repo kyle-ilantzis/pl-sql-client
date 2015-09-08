@@ -48,7 +48,7 @@
 			
 			var createDbQuery = function(queryResult,i) {
 				return queryResult.error ?
-						 <pl.DbError key={key(i)} error={queryResult.error}/>:
+						 <pl.DbError key={key(i)} queryResult={queryResult}/>:
 						 <pl.DbQuery key={key(i)} queryResult={queryResult}/>;
 			};
 			
