@@ -141,9 +141,9 @@
 		config.databases = dbConfig;
 
 		configApi.save(config).catch(function(err){
-			alert('Error while saving cofiguration');
 			console.log(TAG, 'Error while saving configuration:');
 			console.log(TAG, err);
+			throw err;
 		});
 	}
 
