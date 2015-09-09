@@ -24,7 +24,7 @@ MultiQuery.prototype.query = command => {
     let results = [];
     let promises = [];
 
-    command.urls.forEach( url => {
+    command.urls.forEach( (url, index) => {
         promises.push(connect_to_db(url.url).then( connection => {
           return prepare_for_query(url, connection);
 
@@ -39,10 +39,10 @@ MultiQuery.prototype.query = command => {
           return transform_data(url, params.result_set, params.result);
 
         }).then( result => {
-          return results.push(result);
+          results[index] = result;
 
         }).catch( error => {
-          results.push(transform_error(url, error));
+          results[index] = transform_error(url, error);
 
         })
       );
