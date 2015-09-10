@@ -1,5 +1,7 @@
 (function(pl) {
 	
+	var TAG = "DbEditItem:::";
+	
 	var DbEditItem = React.createClass({
 		
 		getInitialState: function() {
@@ -14,6 +16,11 @@
 			);
 		},
 		
+		setDb: function(db) {
+			this.refs.dbEditFields.setDb(db);
+			pl.updateState(this, {db: {$set: db}});
+		},
+		
 		clear: function() {
 			this.refs.dbEditFields.clear();
 			this.setState(this.getInitialState());
@@ -21,6 +28,7 @@
 		
 		onDbTypeChange: function(sender,dbType) {
 			pl.updateState(this, { db: { dbType: {$set: dbType} } });
+			pl.nullToNoop(this.props.onDbTypeChange)(this,dbType);
 		},
 	
 		onSave: function(e) {
@@ -39,10 +47,11 @@
 				switch(db.dbType) {
 					case pl.DbTypes.DB_TYPE_MYSQL:
 					case pl.DbTypes.DB_TYPE_POSTGRES:
-						return <pl.DbEditFields ref="dbEditFields" db={db}/>
+						return <pl.DbEditFields ref="dbEditFields" db={db}/>;
 					case pl.DbTypes.DB_TYPE_SQLITE3:
-						return <pl.DbSqlite3EditFields ref="dbEditFields" db={db}/>
+						return <pl.DbSqlite3EditFields ref="dbEditFields" db={db}/>;
 					default:
+						console.log(TAG,"can't create fields for dbType:",db.dbType);
 						return;
 				}
 			};

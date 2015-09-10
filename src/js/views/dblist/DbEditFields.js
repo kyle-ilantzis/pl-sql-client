@@ -18,6 +18,10 @@
 			return pl.extend({},this.state);
 		},
 		
+		setDb: function(db) {
+			this.setState(db);	
+		},
+		
 		clear: function() {
 			this.setState(this.getInitialState());
 		},

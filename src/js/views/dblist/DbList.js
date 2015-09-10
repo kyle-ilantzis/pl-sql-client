@@ -4,14 +4,7 @@
 
 	var ADD_DB_ID = "add";
 
-	var DEFAULT_ADD_DB = {
-		id: ADD_DB_ID,
-		dbType: pl.DbTypes.DB_TYPE_MYSQL,
-		host: "localhost",
-		port: "3306",
-		user: "root",
-		password: ""
-	};
+	var DEFAULT_ADD_DB_TYPE = pl.DbTypes.DB_TYPE_MYSQL;
 
 	var DbList = React.createClass({
 
@@ -40,24 +33,16 @@
 			// TODO - Undo bar appears
 		},
 
-		onSave: function(sender,id) {
+		onAdd: function(sender) {
+			pl.DbItemActions.add(sender.getDb());
+		},
 
-			if (id == ADD_DB_ID) {
-				pl.DbItemActions.add(sender.getDb());
-			}
-			else {
-				pl.DbItemActions.update(sender.getDb());
-			}
+		onSave: function(sender,id) {			
+			pl.DbItemActions.update(sender.getDb());
 		},
 
 		onCancel: function(sender,id) {
-
-			if (id == ADD_DB_ID) {
-				sender.clear();
-			}
-			else {
-				pl.DbItemActions.cancelEdit(id);
-			}
+			pl.DbItemActions.cancelEdit(id);
 		},
 
 		render: function() {
@@ -78,7 +63,7 @@
 			};
 
 			return <div className="DbList">
-				<pl.DbEditItem key={ADD_DB_ID} db={DEFAULT_ADD_DB} onSave={that.onSave} onCancel={that.onCancel}/>
+				<pl.DbAddItem defaultDbType={DEFAULT_ADD_DB_TYPE} onAdd={this.onAdd}/>
 				{this.state.dbItems.map(createDbItem)}
 			</div>;
 		}
