@@ -22,10 +22,6 @@
 			this.setState(db);	
 		},
 		
-		clear: function() {
-			this.setState(this.getInitialState());
-		},
-		
 		render: function() {
 		
 			return <div className="DbEditFields">

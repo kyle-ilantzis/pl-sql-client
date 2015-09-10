@@ -21,14 +21,9 @@
 			pl.updateState(this, {db: {$set: db}});
 		},
 		
-		clear: function() {
-			this.refs.dbEditFields.clear();
-			this.setState(this.getInitialState());
-		},
-		
 		onDbTypeChange: function(sender,dbType) {
 			pl.updateState(this, { db: { dbType: {$set: dbType} } });
-			pl.nullToNoop(this.props.onDbTypeChange)(this,dbType);
+			pl.nullToNoop(this.props.onDbTypeChange)(this,dbType);						
 		},
 	
 		onSave: function(e) {
