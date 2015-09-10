@@ -2,8 +2,6 @@
 
 	var TAG = "DbList:::";
 
-	var ADD_DB_ID = "add";
-
 	var DEFAULT_ADD_DB_TYPE = pl.DbTypes.DB_TYPE_MYSQL;
 
 	var DbList = React.createClass({
