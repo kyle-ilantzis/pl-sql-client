@@ -17,20 +17,13 @@
 */
 
 (function(pl) {
-	var Config = require('./build/backend/config.js');
-	var gui = require('nw.gui');
-
+	
 	var TAG = "DbItemStore:::";
 	var NAME = "DbItemStore";
 
-	var configApi = new Config({
-		directory: gui.App.dataPath,
-		file: 'config.json'
-	});
-
-	var config = {};
-
 	var DbItemStore = {
+
+		BROADCAST_DATABASES: "DbItemStore-BCAST_DBS",
 
 		LOAD: "DbItemStore-LOAD",
 
@@ -49,6 +42,15 @@
 
 	var notify = pl.observable(DbItemStore);
 
+	var broadcastDatabases = function() {
+		
+		var databases = dbItems.map(function(dbItem){
+			return dbItem.db;
+		});
+		
+		pl.BroadcastActions.databases( databases );		
+	};
+
 	var getDbItemIndex = function(id) {
 		return pl.findIndex(dbItems, function(dbItem) { return dbItem.db.id === id; });
 	};
@@ -61,33 +63,20 @@
 			dbItems = pl.update(dbItems, {$splice: [[i,1,newDbItem]]});
 		}
 	};
-
+	
 	var load = function() {
 
-		configApi.load().then(function(readConfig){
-			return readConfig;
+		var dbs = pl.SettingsStore.getDatabases();
 
-		}).catch(function(err){
-				console.log(TAG, 'Error while loading config. Initializing to empty.');
-				console.log(TAG, err);
-				return {};
+		dbItems = dbs.map(function(db,i){
+			var mappedDb = pl.extend({},db);
+			mappedDb.id = i;
 
-		}).then(function(readConfig){
-			config = readConfig;
-
-			var dbs = config.databases || [];
-
-			dbItems = dbs.map(function(db,i){
-				var mappedDb = pl.extend({},db);
-				mappedDb.id = i;
-
-				return { state: DbItemStore.STATE_VIEW, db: mappedDb };
-			});
-
-			idSeq = dbItems.length === 0 ? 0 : dbItems[dbItems.length-1].db.id + 1;
-			notify();
+			return { state: DbItemStore.STATE_VIEW, db: mappedDb };
 		});
 
+		idSeq = dbItems.length === 0 ? 0 : dbItems[dbItems.length-1].db.id + 1;
+		notify();
 	};
 
 	var edit = function(id) {
@@ -116,8 +105,7 @@
 
 		dbItems = pl.update(dbItems, {$push: [newDbItem]});
 
-		saveConfiguration();
-
+		broadcastDatabases();
 		notify();
 	};
 
@@ -127,25 +115,9 @@
 			return pl.extend( dbItem, {state: DbItemStore.STATE_VIEW, db: db} );
 		});
 
-		saveConfiguration();
-
+		broadcastDatabases();
 		notify();
 	};
-
-	function saveConfiguration() {
-
-		dbConfig = dbItems.map(function(dbItem){
-			return dbItem.db;
-		});
-
-		config.databases = dbConfig;
-
-		configApi.save(config).catch(function(err){
-			console.log(TAG, 'Error while saving configuration:');
-			console.log(TAG, err);
-			throw err;
-		});
-	}
 
 	var remove = function(id) {
 
@@ -154,8 +126,7 @@
 			dbItems = pl.update(dbItems, {$splice: [[i,1]]});
 		}
 
-		saveConfiguration();
-
+		broadcastDatabases();
 		notify();
 	};
 
@@ -163,7 +134,7 @@
 
 		switch(action.actionType) {
 
-			case DbItemStore.LOAD:
+			case pl.SettingsStore.BROADCAST_LOADED:
 				load();
 				break;
 

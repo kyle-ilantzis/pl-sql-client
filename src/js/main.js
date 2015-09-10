@@ -2,7 +2,7 @@
 
 	var main = function() {
 		
-		pl.DbItemActions.load();
+		pl.SettingsActions.load();
 		
 		React.render(<pl.App/>,document.body);
 	}
