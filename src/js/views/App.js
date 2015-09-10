@@ -8,7 +8,7 @@
 	pl.App = React.createClass({
 		
 		getInitialState() {
-			return { view: DBLIST };
+			return { view: MULTIQUERY };
 		},
 		
 		onMultiQueryClick: function(e) {
