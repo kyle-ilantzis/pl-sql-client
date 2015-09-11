@@ -11,7 +11,7 @@ var bootstrap = path.join(__dirname, 'vendor', 'bootstrap-3.3.5', 'less');
 var nw = cfg.nw || './node_modules/nw/bin/nw';
 
 function less_theme(file){
-  return gulp.src('./less/src/' + file + '.less')
+  return gulp.src('./src/less/' + file + '.less')
     .pipe(less({
       paths: [ bootstrap ],
       relativeUrls: true
@@ -30,7 +30,7 @@ gulp.task('less-light', function(){
 gulp.task('theme', ['less-dark', 'less-light']);
 
 gulp.task('jsx', function(){
-  return gulp.src('./js/src/**')
+  return gulp.src('./src/js/**')
         .pipe(react())
         .pipe(gulp.dest('build'));
 });
@@ -41,8 +41,8 @@ gulp.task('serve', shell.task([
 
 gulp.task('watch', function(){
   console.log('watching you');
-  gulp.watch('./js/src/**', ['jsx']);
-  gulp.watch('./less/src/**', ['theme']);
+  gulp.watch('./src/js/**', ['jsx']);
+  gulp.watch('./src/less/**', ['theme']);
 });
 
 gulp.task('start', ['theme', 'jsx', 'watch', 'serve']);
