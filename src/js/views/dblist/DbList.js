@@ -78,6 +78,7 @@
 			};
 
 			return <div className="DbList">
+				<h1>Databases</h1>
 				<pl.DbEditItem key={ADD_DB_ID} db={DEFAULT_ADD_DB} onSave={that.onSave} onCancel={that.onCancel}/>
 				{this.state.dbItems.map(createDbItem)}
 			</div>;

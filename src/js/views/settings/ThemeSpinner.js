@@ -50,10 +50,12 @@
             };
             
             return <div className="ThemeSpinner">
-                <label>Theme</label>
-                <select ref="spinner" value={this.state.theme} onChange={this.onChange}>
-                    {pl.Themes.getThemes().map(createOption)}
-                </select>
+                <h1>Theme</h1>
+                <div>
+                    <select ref="spinner" value={this.state.theme} onChange={this.onChange}>
+                        {pl.Themes.getThemes().map(createOption)}
+                    </select>
+                </div>
             </div>;
         }
     });

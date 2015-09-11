@@ -16,29 +16,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-@import "bootstrap";
-
-@nbsp: "\00a0";
-
-@spacer: 2em;
-@small-spacer: @spacer/2;
-@editor-width: 100%;
-@editor-min-height: 125px;
-@editor-height: 200px;
-
-body {
-	background-color: @pl-body-bg;
-	color: @color;
+.ThemeSpinner {
+    .container();
+	
+    .make-sm-column(10);
+    .make-sm-column-offset(1);
+    
+    .make-md-column(8);
+    .make-md-column-offset(2);
+    
+    .make-lg-column(6);
+    .make-lg-column-offset(3);
+    
+    margin-bottom: @spacer;
+    
+    &> h1 {
+        .make-xs-column(12);
+        margin-bottom: @small-spacer;
+    }
+    
+    &> div {       
+        .form-group();        
+        .make-xs-column(6);
+    }
+    
+    select {
+        .make-xs-column(3);
+        
+        .form-control();
+    }
 }
-
-@import "views/App.less";
-
-@import "views/settings/ThemeSpinner.less";
-
-@import "views/dblist/DbList.less";
-@import "views/dblist/DbEditItem.less";
-@import "views/dblist/DbItem.less";
-
-@import "views/dbmultiquery/DbInputSql.less";
-@import "views/dbmultiquery/DbError.less";
-@import "views/dbmultiquery/DbQuery.less";
