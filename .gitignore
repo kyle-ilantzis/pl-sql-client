@@ -5,3 +5,5 @@ npm-debug.log
 gulpconfig.json
 userconfig.json
 *.bat
+.idea
+*.iml

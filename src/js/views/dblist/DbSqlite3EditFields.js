@@ -12,7 +12,9 @@
 			return pl.extend({},this.state);
 		},
 	
-		clear: pl.noop,
+		setDb: function(db) {
+			this.setState(db);
+		},
 	
 		render: function() {
 			
