@@ -57,6 +57,7 @@
 				</div>
 				
 				<div className={dblist("show", "hidden")}>
+					<pl.ThemeSpinner/>
 					<pl.DbList/>
 				</div>
 			</div>

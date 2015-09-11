@@ -2,6 +2,7 @@
 
 	var main = function() {
 		
+		pl.Themes.load();
 		pl.SettingsActions.load();
 		
 		React.render(<pl.App/>,document.body);
