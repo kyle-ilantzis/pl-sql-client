@@ -11,9 +11,7 @@
 	
 	window.pl = pl.extend(pl, {
 		
-		noop: function(){},
-		
-		nullToNoop: function(f) { return f ? f : noop; },
+		nullToNoop: function(f) { return f ? f : function(){}; },
 		
 		findIndex: function(arr,f) {
 			

@@ -18,8 +18,8 @@
 			return pl.extend({},this.state);
 		},
 		
-		clear: function() {
-			this.setState(this.getInitialState());
+		setDb: function(db) {
+			this.setState(db);	
 		},
 		
 		render: function() {
