@@ -5,12 +5,14 @@
 let fs = require('fs');
 let mkdirp = require('mkdirp');
 let path = require('path');
+let watch = require('node-watch');
 
 const DEFAULT_CONFIG_FOLDER = '.';
 const DEFAULT_CONFIG_FILE = 'config.json';
 const DEFAULT_ENCODING = 'utf8';
 
 /**
+ * @class
  * opts.directory = config file to load, default to .
  * opts.file = config file to load, default to config.json
  * opts.configEncoding = encoding to use, default to utf8
@@ -23,6 +25,9 @@ let Config = function(opts) {
   this.configDirectoryPath = directory;
   this.configFilePath = path.join(directory, file);
   this.configEncoding = encoding;
+
+  this.watchCallbacks = [];
+  this.watcherSetuped = false;
 };
 
 Config.prototype.load = () => {
@@ -33,6 +38,7 @@ Config.prototype.load = () => {
       if (err){
         reject(err);
       } else {
+        setup_watcher(that);
         resolve(JSON.parse(data));
       }
     });
@@ -73,5 +79,45 @@ function write_config(path, encoding, obj){
     });
   });
 }
+
+function setup_watcher(that){
+  if (that.watcherSetuped){
+    return;
+  }
+
+  watch(that.configFilePath, () => {
+    fs.readFile(that.configFilePath, that.configEncoding, (err, data) => {
+
+      if (err) {
+        that.watchCallbacks.forEach( (cb) => {
+          cb(err);
+        });
+      } else {
+        let config = JSON.parse(data);
+
+        that.watchCallbacks.forEach( (cb) => {
+          cb(null, config);
+        });
+      }
+    });
+  });
+
+  that.watcherSetuped = true;
+}
+
+/**
+ * Add a callback to invoke when config changes.
+ * @param {Config~configChanged} callback
+ */
+Config.prototype.watch = (callback) => {
+  this.watchCallbacks.push(callback);
+};
+
+/**
+ * Callback used by watch.
+ * @callback Config~configChanged
+ * @param error if an error occurs
+ * @param config the new configuration read
+ */
 
 module.exports = Config;
