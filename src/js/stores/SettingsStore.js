@@ -37,16 +37,13 @@
 		BROADCAST_LOADED: "SettingsStore-BCAST_LOADED",
 		
 		LOAD: "SettingsStore-LOAD",
-		SET_THEME: "SettingsStore-SET_THEME",
-		
-		THEME_LIGHT: "SettingsStore-THEME_LIGHT",
-		THEME_DARK: "SettingsStore-THEME_DARK"
+		SET_THEME: "SettingsStore-SET_THEME"
 	};
 	
 	var notify = pl.observable(SettingsStore);
 	
 	var saveConfig = function() {
-
+		
 		configApi.save(config).catch(function(err){
 			console.log(TAG, 'Error while saving configuration:', err);
 		});
@@ -54,19 +51,25 @@
 	
 	var load = function() {
 		
-		configApi.load().then(function(readConfig){			
-			return readConfig;
-					
-		}).catch(function(err){						
-			console.log(TAG, 'Error while loading config. Initializing to empty.', err);
-			return {};
+		configApi
+			.load()
+			.catch(function(err){						
+				console.log(TAG, 'Error while loading config. Initializing to empty.', err);
+				return {};
 			
-		}).then( function(readConfig) {
-			loaded = true;
-			config = readConfig;
-			pl.BroadcastActions.settingsLoaded();			
-			notify();	
-		});
+			}).then( function(readConfig) {
+				loaded = true;
+				
+				config = pl.extend({
+						theme: null,
+						databases: []
+					}, 
+					readConfig
+				);
+				
+				pl.BroadcastActions.settingsLoaded();			
+				notify();	
+			});
 	};
 	
 	var setTheme = function(theme) {
@@ -76,9 +79,9 @@
 		notify();
 	};
 	
-	var setDatabases = function(databases) {
+	var setDatabases = function() {
 		
-		config.databases = databases;
+		config.databases = pl.DbItemStore.getDatabases();
 		saveConfig();
 		notify();
 	};
@@ -87,8 +90,8 @@
 		
 		switch (action.actionType) {
 			
-			case pl.DbItemStore.BROADCAST_DATABASES:
-				setDatabases(action.databases);
+			case pl.DbItemStore.BROADCAST_CHANGED:
+				setDatabases();
 				break;
 			
 			case SettingsStore.LOAD:

@@ -18,7 +18,7 @@
 
 (function(pl){
     
-    var TAG = "SettingsAcitons:::";
+    var TAG = "SettingsActions:::";
     
     pl.SettingsActions = {
       

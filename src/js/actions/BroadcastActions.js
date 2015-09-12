@@ -26,10 +26,9 @@
 			});
 		},
 		
-		databases: function(databases) {
+		databasesChanged: function() {
 			pl.Dispatcher.dispatch({
-				actionType: pl.DbItemStore.BROADCAST_DATABASES,
-				databases: databases
+				actionType: pl.DbItemStore.BROADCAST_CHANGED
 			});
 		},
 	}	

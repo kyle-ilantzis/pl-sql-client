@@ -23,7 +23,7 @@
 
 	var DbItemStore = {
 
-		BROADCAST_DATABASES: "DbItemStore-BCAST_DBS",
+		BROADCAST_CHANGED: "DbItemStore-BCAST_CHANGED",
 
 		LOAD: "DbItemStore-LOAD",
 
@@ -41,15 +41,6 @@
 	var dbItems = [];
 
 	var notify = pl.observable(DbItemStore);
-
-	var broadcastDatabases = function() {
-		
-		var databases = dbItems.map(function(dbItem){
-			return dbItem.db;
-		});
-		
-		pl.BroadcastActions.databases( databases );		
-	};
 
 	var getDbItemIndex = function(id) {
 		return pl.findIndex(dbItems, function(dbItem) { return dbItem.db.id === id; });
@@ -105,7 +96,7 @@
 
 		dbItems = pl.update(dbItems, {$push: [newDbItem]});
 
-		broadcastDatabases();
+		pl.BroadcastActions.databasesChanged();
 		notify();
 	};
 
@@ -115,7 +106,7 @@
 			return pl.extend( dbItem, {state: DbItemStore.STATE_VIEW, db: db} );
 		});
 
-		broadcastDatabases();
+		pl.BroadcastActions.databasesChanged();
 		notify();
 	};
 
@@ -126,7 +117,7 @@
 			dbItems = pl.update(dbItems, {$splice: [[i,1]]});
 		}
 
-		broadcastDatabases();
+		pl.BroadcastActions.databasesChanged();
 		notify();
 	};
 
@@ -164,6 +155,12 @@
 
 		getDbItems: function() {
 			return dbItems;
+		},
+
+		getDatabases: function() {
+			return dbItems.map(function(dbItem) {
+				return dbItem.db;
+			});
 		},
 
 		getDbUrls: function() {
