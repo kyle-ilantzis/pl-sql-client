@@ -61,6 +61,7 @@
 			};
 
 			return <div className="DbList">
+				<h1>Databases</h1>
 				<pl.DbAddItem defaultDbType={DEFAULT_ADD_DB_TYPE} onAdd={this.onAdd}/>
 				{this.state.dbItems.map(createDbItem)}
 			</div>;

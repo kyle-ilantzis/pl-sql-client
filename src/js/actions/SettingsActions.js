@@ -1,4 +1,4 @@
-/*
+/*!
 	pl-sql-client - Query many database at once
     Copyright (C) 2015  Kyle Ilantzis, Pier-Luc Caron St-Pierre
 
@@ -16,7 +16,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-@color: black;
-@pl-body-bg: white;
-
-@import  "main.less";
+(function(pl){
+    
+    var TAG = "SettingsActions:::";
+    
+    pl.SettingsActions = {
+      
+        load: function() {
+            pl.Dispatcher.dispatch({
+                actionType: pl.SettingsStore.LOAD 
+            });
+        },
+      
+        setTheme: function(theme) {
+            pl.Dispatcher.dispatch({
+                actionType: pl.SettingsStore.SET_THEME,
+                theme: theme 
+            });
+        },
+    };
+})(pl||{});

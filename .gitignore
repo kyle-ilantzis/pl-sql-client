@@ -1,9 +1,10 @@
 node_modules/
 build/
 npm-debug.log
-.settings/
+.vscode/
 gulpconfig.json
 userconfig.json
 *.bat
 .idea
 *.iml
+*.lnk
