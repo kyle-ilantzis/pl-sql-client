@@ -18,61 +18,60 @@
 
 (function(pl) {
     var MultiQuery = require('./build/backend/multiquery.js');
-    
+
     var TAG = "DbQueryStore:::";
-	var NAME = "DbQueryStore";
-    
+    var NAME = "DbQueryStore";
+
     var DbQueryStore = {
         QUERY: "DbQueryStore-QUERY"
     };
-    
+
     var multiQueryIdSeq = 0;
     var multiQueryResult = { id: 0, results: [] };
     var multiquery = new MultiQuery();
-    
+
     var notify = pl.observable(DbQueryStore);
-    
+
     var query = function(sql) {
-        
-        var cmd = { 
+
+        var cmd = {
             urls: pl.DbItemStore.getDbUrls(),
             query: sql
-        };        
-    
+        };
+
         multiquery.query(cmd).then(
             function(result) {
-                
+
                 var nextId = String(multiQueryIdSeq++);
-                
+
                 result.forEach(function(queryResult, i) {
-                    queryResult.id = nextId + "_" + i;     
+                    queryResult.id = nextId + "_" + i;
                 });
-                
+
                 multiQueryResult = { id:  nextId, results: result };
                 notify();
             },
             function(error) {
-                
                 multiQueryResult = [];
                 notify();
             }
         );
     };
-    
+
     pl.Dispatcher.register(NAME, function(action) {
-        
+
         switch(action.actionType) {
-           
+
             case DbQueryStore.QUERY:
                 query(action.sql);
                 break;
-        } 
+        }
     });
-    
+
     pl.DbQueryStore = pl.extend(DbQueryStore, {
-        
+
         getMultiQueryResult: function() {
-            return multiQueryResult;  
+            return multiQueryResult;
         }
     });
 })(pl||{});

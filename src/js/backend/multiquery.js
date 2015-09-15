@@ -18,6 +18,14 @@ let MultiQuery = function() {};
 MultiQuery.prototype.query = command => {
   console.log(TAG, command);
 
+  if ((!command.query) || command.query.trim() === ''){
+    return Promise.reject(new Error("Query is empty!"));
+  }
+
+  if ((!command.urls) || command.urls.length === 0){
+    return Promise.reject(new Error("No database specified!"));
+  }
+
   return new Promise( (resolve, reject) => {
     let request_date = moment().unix();
 

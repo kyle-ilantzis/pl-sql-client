@@ -17,41 +17,41 @@
 */
 
 (function(pl){
-	
+
 	var TAG = "DbMultiQuery:::";
-	
+
 	pl.DbMultiQuery = React.createClass({
-		
+
 		getInitialState: function() {
 			return { multiQueryResult: pl.DbQueryStore.getMultiQueryResult() };
 		},
-		
+
 		componentDidMount: function() {
 			pl.DbQueryStore.addChangeListener(this.onChange);
 		},
-		
+
 		componentWillUnmount: function() {
 			pl.DbQueryStore.removeChangeListener(this.onChange);
 		},
-		
+
 		onChange: function() {
 			pl.updateState(this, { multiQueryResult: {$set: pl.DbQueryStore.getMultiQueryResult()} });
 		},
-		
+
 		render: function() {
-			
+
 			var that = this;
-			
+
 			var key = function(i) {
 				return that.state.multiQueryResult.id + "_" + i;
-			}
-			
+			};
+
 			var createDbQuery = function(queryResult,i) {
 				return queryResult.error ?
 						 <pl.DbError key={key(i)} queryResult={queryResult}/>:
 						 <pl.DbQuery key={key(i)} queryResult={queryResult}/>;
 			};
-			
+
 			return <div>
 				<pl.DbInputSql/>
 				{this.state.multiQueryResult.results.map(createDbQuery)}
