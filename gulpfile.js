@@ -10,24 +10,14 @@ var cfg = !fs.existsSync('gulpconfig.json') ? {} : JSON.parse( fs.readFileSync('
 var bootstrap = path.join(__dirname, 'vendor', 'bootstrap-3.3.5', 'less');
 var nw = cfg.nw || './node_modules/nw/bin/nw';
 
-function less_theme(file){
-  return gulp.src('./src/less/' + file + '.less')
+gulp.task('theme', function() {
+  return gulp.src('./src/less/main.less')
     .pipe(less({
       paths: [ bootstrap ],
       relativeUrls: true
     }))
     .pipe(gulp.dest('./build'));
-}
-
-gulp.task('less-dark', function(){
-  return less_theme('main-dark');
 });
-
-gulp.task('less-light', function(){
-  return less_theme('main-light');
-});
-
-gulp.task('theme', ['less-dark', 'less-light']);
 
 gulp.task('jsx', function(){
   return gulp.src('./src/js/**')

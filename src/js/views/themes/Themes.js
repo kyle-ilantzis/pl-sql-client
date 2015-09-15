@@ -2,23 +2,13 @@
 	
 	var TAG = "Themes:::";
 	
-	var $themes = jQuery();
-	
-	var themes = [];
+	var THEME_LIGHT = "light";
+	var THEME_DARK = "dark";
+	var THEMES = ["light", "dark"];
+	var THEME_DEFAULT = THEME_LIGHT;
 	
 	var load = function() {
-		
-		$themes = jQuery("link[data-theme]");
-		
-		themes = $themes.map(function(_,theme) {
-					return jQuery(theme).data("theme");
-				 })
-				 .get();
-		
-		console.log(TAG,"available themes",themes);
-		
-		pl.SettingsStore.addChangeListener(onSettingsChange);
-		
+		pl.SettingsStore.addChangeListener(onSettingsChange);		
 		setTheme(pl.SettingsStore.getTheme());	
 	};
 	
@@ -27,11 +17,14 @@
 	};
 	
 	var setTheme = function(theme) {
-
-		$themes
-			.attr("rel",null)
-			.filter(function(_,t) { return jQuery(t).data("theme") === theme; })
-			.attr("rel","stylesheet");
+		
+		var i = THEMES.indexOf(theme);
+		var hasTheme = i >= 0;
+		
+		var newTheme = hasTheme ? theme : THEME_DEFAULT;
+		
+		var html = document.body.parentElement;		
+		html.className = newTheme;
 	};
 	
 	pl.Themes = {
@@ -39,7 +32,7 @@
 		load: load,
 		
 		getThemes: function() {
-			return themes;
+			return THEMES;
 		}
 	};
 })(pl||{});

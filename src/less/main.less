@@ -26,19 +26,32 @@
 @editor-min-height: 125px;
 @editor-height: 200px;
 
-body {
-	background-color: @pl-body-bg;
-	color: @color;
+.main() {
+    
+    body {
+        background-color: @pl-body-bg;
+        color: @color;
+    }
+    
+    @import "views/App.less";
+    
+    @import "views/settings/ThemeSpinner.less";
+    
+    @import "views/dblist/DbList.less";
+    @import "views/dblist/DbEditItem.less";
+    @import "views/dblist/DbItem.less";
+    
+    @import "views/dbmultiquery/DbInputSql.less";
+    @import "views/dbmultiquery/DbError.less";
+    @import "views/dbmultiquery/DbQuery.less";
 }
 
-@import "views/App.less";
+.light {
+    @import "theme-light.less";
+    .main();
+}
 
-@import "views/settings/ThemeSpinner.less";
-
-@import "views/dblist/DbList.less";
-@import "views/dblist/DbEditItem.less";
-@import "views/dblist/DbItem.less";
-
-@import "views/dbmultiquery/DbInputSql.less";
-@import "views/dbmultiquery/DbError.less";
-@import "views/dbmultiquery/DbQuery.less";
+.dark {
+    @import "theme-dark.less";
+    .main();
+}
