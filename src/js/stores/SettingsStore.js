@@ -17,9 +17,9 @@
 */
 
 (function(pl) {
-	var Config = require('./build/backend/config.js');
+	var Config = require('./backend/config.js');
 	var gui = require('nw.gui');
-	
+
 	var TAG = "SettingsStore:::";
 	var NAME = "SettingsStore";
 
@@ -29,50 +29,50 @@
 	});
 
 	var loaded = false;
-	
+
 	var config = {};
-	
+
 	var SettingsStore = {
-		
+
 		BROADCAST_LOADED: "SettingsStore-BCAST_LOADED",
-		
+
 		LOAD: "SettingsStore-LOAD",
 		SET_THEME: "SettingsStore-SET_THEME"
 	};
-	
+
 	var notify = pl.observable(SettingsStore);
-	
+
 	var saveConfig = function() {
-		
+
 		configApi.save(config).catch(function(err){
 			console.log(TAG, 'Error while saving configuration:', err);
 		});
 	};
-	
+
 	var load = function() {
-		
+
 		configApi
 			.load()
-			.catch(function(err){										
+			.catch(function(err){
 				settingsLoaded(err, null);
 				loaded = true;
-				
-			}).then( function(readConfig) {				
+
+			}).then( function(readConfig) {
 				settingsLoaded(null, readConfig);
 				loaded = true;
-									
+
 			});
-			
+
 		configApi.watch(settingsLoaded);
 	};
-	
+
 	var settingsLoaded = function(err, readConfig) {
-	
+
 			if (err && loaded) {
 				console.log(TAG, 'Error while loading configuration.', err);
 				return;
 			}
-	
+
 			if (readConfig) {
 
 				console.log(TAG, 'New configuration loaded.');
@@ -80,7 +80,7 @@
 				config = pl.extend({
 						theme: null,
 						databases: []
-					}, 
+					},
 					readConfig
 				);
 			}
@@ -88,49 +88,49 @@
 				console.log(TAG, 'Error while loading configuration. Initializing to empty.', err);
 				readConfig = {};
 			}
-			
-			pl.BroadcastActions.settingsLoaded();			
+
+			pl.BroadcastActions.settingsLoaded();
 			notify();
 	};
-	
+
 	var setTheme = function(theme) {
-		
+
 		config.theme = theme;
 		saveConfig();
 		notify();
 	};
-	
+
 	var setDatabases = function() {
-		
+
 		config.databases = pl.DbItemStore.getDatabases();
 		saveConfig();
 		notify();
 	};
-	
+
 	pl.Dispatcher.register(NAME, function(action) {
-		
+
 		switch (action.actionType) {
-			
+
 			case pl.DbItemStore.BROADCAST_CHANGED:
 				setDatabases();
 				break;
-			
+
 			case SettingsStore.LOAD:
 				load();
 				break;
-			
+
 			case SettingsStore.SET_THEME:
 				setTheme(action.theme);
-				break;							
+				break;
 		}
 	});
-	
+
 	pl.SettingsStore = pl.extend(SettingsStore, {
-		
+
 		getTheme: function() {
-			return config.theme;	
+			return config.theme;
 		},
-		
+
 		getDatabases: function() {
 			return config.databases;
 		}

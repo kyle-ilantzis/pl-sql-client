@@ -25,21 +25,21 @@
 	<script src="app:/_/vendor/jquery-ui-1.11.4/jquery-ui.js"></script>
 
 	<script type="text/javascript" src="app:/_/build/scope/pl.js"></script>
-	
+
 	<script type="text/javascript" src="app:/_/build/dispatcher/Dispatcher.js"></script>
-	
+
 	<script type="text/javascript" src="app:/_/build/stores/SettingsStore.js"></script>
 	<script type="text/javascript" src="app:/_/build/actions/SettingsActions.js"></script>
-	
+
 	<script type="text/javascript" src="app:/_/build/stores/DbTypes.js"></script>
 	<script type="text/javascript" src="app:/_/build/stores/DbItemStore.js"></script>
 	<script type="text/javascript" src="app:/_/build/actions/DbItemActions.js"></script>
-	
+
 	<script type="text/javascript" src="app:/_/build/stores/DbQueryStore.js"></script>
 	<script type="text/javascript" src="app:/_/build/actions/DbQueryActions.js"></script>
-	
+
 	<script type="text/javascript" src="app:/_/build/actions/BroadcastActions.js"></script>
-		
+
 	<script type="text/javascript" src="app:/_/build/views/dblist/DbTypeSpinner.js"></script>
 	<script type="text/javascript" src="app:/_/build/views/dblist/DbItemFields.js"></script>
 	<script type="text/javascript" src="app:/_/build/views/dblist/DbSqlite3ItemFields.js"></script>
@@ -49,37 +49,30 @@
 	<script type="text/javascript" src="app:/_/build/views/dblist/DbEditItem.js"></script>
 	<script type="text/javascript" src="app:/_/build/views/dblist/DbAddItem.js"></script>
 	<script type="text/javascript" src="app:/_/build/views/dblist/DbList.js"></script>
-	
+
 	<script type="text/javascript" src="app:/_/build/views/dbmultiquery/DbInputSql.js"></script>
 	<script type="text/javascript" src="app:/_/build/views/dbmultiquery/DbError.js"></script>
 	<script type="text/javascript" src="app:/_/build/views/dbmultiquery/DbQuery.js"></script>
 	<script type="text/javascript" src="app:/_/build/views/dbmultiquery/DbMultiQuery.js"></script>
-	
+
 	<script type="text/javascript" src="app:/_/build/views/themes/Themes.js"></script>
 	<script type="text/javascript" src="app:/_/build/views/settings/ThemeSpinner.js"></script>
-	
+
 	<script type="text/javascript" src="app:/_/build/views/App.js"></script>
-	
+
 	<script type="text/javascript" src="app:/_/build/main.js"></script>
 
 	<link href="app:/_/vendor/jquery-ui-1.11.4/jquery-ui.css" type="text/css" rel="stylesheet" />
-	
+
 	<link href="app:/_/build/main.css" type="text/css" rel="stylesheet"/>
 <head>
 <body>
 	<script type="text/javascript">
-		
+
 		$.noConflict();
-		
+
 		pl.main();
 	</script>
 
-	<script>
-	  var gulp = require('gulp');
-	  gulp.task('reload', function () {
-	    if (location) location.reload();
-	  });
-
-	  gulp.watch('build/*', ['reload']);
-	</script>
+	 <!-- substitute:watch -->
 </body>

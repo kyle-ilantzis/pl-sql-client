@@ -17,7 +17,7 @@
 */
 
 (function(pl) {
-    var MultiQuery = require('./build/backend/multiquery.js');
+    var MultiQuery = require('./backend/multiquery.js');
 
     var TAG = "DbQueryStore:::";
     var NAME = "DbQueryStore";

@@ -5,6 +5,11 @@ var react = require('gulp-react');
 var shell = require('gulp-shell');
 var fs = require('fs');
 var runSequence = require('run-sequence');
+var environments = require('gulp-environments');
+var substituter = require('gulp-substituter');
+
+var devMode = environments.development();
+var prodMode = environments.production();
 
 var cfg = !fs.existsSync('gulpconfig.json') ? {} : JSON.parse( fs.readFileSync('gulpconfig.json', {encoding: 'utf8'}) );
 
@@ -17,7 +22,7 @@ gulp.task('theme', function() {
       paths: [ bootstrap ],
       relativeUrls: true
     }))
-    .pipe(gulp.dest('./build'));
+    .pipe(gulp.dest('build'));
 });
 
 gulp.task('jsx', function(){
@@ -30,12 +35,29 @@ gulp.task('serve', shell.task([
   nw + ' . --debug'
 ]));
 
+gulp.task('add-watch', function(){
+  if (devMode){
+    console.log('In development mode, including watch statement.');
+    var watchStatement = fs.readFileSync('src/html/watch.html', {encoding: 'utf8'});
+
+    return gulp.src('src/html/index.html')
+      .pipe(substituter({
+          watch: watchStatement
+      }))
+      .pipe(gulp.dest('build'));
+  } else {
+    console.log('Not in development mode, skipping watch statement.');
+    return gulp.src('src/html/index.html')
+      .pipe(gulp.dest('build'));
+  }
+});
+
 gulp.task('watch', function(){
   gulp.watch('./src/js/**', ['jsx']);
   gulp.watch('./src/less/**', ['theme']);
 });
 
-gulp.task('start', ['theme', 'jsx', 'watch'], function(done){
+gulp.task('start', ['add-watch', 'theme', 'jsx', 'watch'], function(done){
   runSequence(
     'serve',
     done
