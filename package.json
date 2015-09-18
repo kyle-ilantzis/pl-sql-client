@@ -14,7 +14,7 @@
     "nw": "^0.12.3",
     "react-tools": "^0.13.3"
   },
-  "main": "index.html",
+  "main": "build/index.html",
   "scripts": {
     "start": "gulp"
   },
@@ -24,9 +24,12 @@
   "js-flags": "--harmony --harmony_arrow_functions",
   "devDependencies": {
     "gulp": "^3.9.0",
+    "gulp-environments": "^0.1.1",
     "gulp-less": "^3.0.3",
     "gulp-react": "^3.0.1",
     "gulp-shell": "^0.4.3",
-    "gulp-watch": "^4.3.5"
+    "gulp-substituter": "^0.3.0",
+    "gulp-watch": "^4.3.5",
+    "run-sequence": "^1.1.3"
   }
 }
