@@ -8,15 +8,16 @@ var fs = require('fs');
 var cfg = !fs.existsSync('gulpconfig.json') ? {} : JSON.parse( fs.readFileSync('gulpconfig.json', {encoding: 'utf8'}) );
 
 var bootstrap = path.join(__dirname, 'vendor', 'bootstrap-3.3.5', 'less');
+var bootswatch = path.join(__dirname, 'vendor', 'bootswatch');
 var nw = cfg.nw || './node_modules/nw/bin/nw';
 
-gulp.task('theme', function() {
-  return gulp.src('./src/less/main.less')
-    .pipe(less({
-      paths: [ bootstrap ],
-      relativeUrls: true
-    }))
-    .pipe(gulp.dest('./build'));
+gulp.task('themes', function() {
+  return gulp.src('./src/less/theme-*.less')
+        .pipe(less({
+          paths: [ bootstrap, bootswatch ],
+          relativeUrls: true
+        }))
+        .pipe(gulp.dest('./build'));
 });
 
 gulp.task('jsx', function(){
@@ -35,6 +36,6 @@ gulp.task('watch', function(){
   gulp.watch('./src/less/**', ['theme']);
 });
 
-gulp.task('start', ['theme', 'jsx', 'watch', 'serve']);
+gulp.task('start', ['themes', 'jsx', 'watch', 'serve']);
 
 gulp.task('default', ['start']);
