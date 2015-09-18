@@ -4,6 +4,7 @@ var path = require('path');
 var react = require('gulp-react');
 var shell = require('gulp-shell');
 var fs = require('fs');
+var runSequence = require('run-sequence');
 
 var cfg = !fs.existsSync('gulpconfig.json') ? {} : JSON.parse( fs.readFileSync('gulpconfig.json', {encoding: 'utf8'}) );
 
@@ -30,11 +31,15 @@ gulp.task('serve', shell.task([
 ]));
 
 gulp.task('watch', function(){
-  console.log('watching you');
   gulp.watch('./src/js/**', ['jsx']);
   gulp.watch('./src/less/**', ['theme']);
 });
 
-gulp.task('start', ['theme', 'jsx', 'watch', 'serve']);
+gulp.task('start', ['theme', 'jsx', 'watch'], function(done){
+  runSequence(
+    'serve',
+    done
+  );
+});
 
 gulp.task('default', ['start']);
