@@ -53,23 +53,44 @@
 		
 		configApi
 			.load()
-			.catch(function(err){						
-				console.log(TAG, 'Error while loading config. Initializing to empty.', err);
-				return {};
-			
-			}).then( function(readConfig) {
+			.catch(function(err){										
+				settingsLoaded(err, null);
 				loaded = true;
 				
+			}).then( function(readConfig) {				
+				settingsLoaded(null, readConfig);
+				loaded = true;
+									
+			});
+			
+		configApi.watch(settingsLoaded);
+	};
+	
+	var settingsLoaded = function(err, readConfig) {
+	
+			if (err && loaded) {
+				console.log(TAG, 'Error while loading configuration.', err);
+				return;
+			}
+	
+			if (readConfig) {
+
+				console.log(TAG, 'New configuration loaded.');
+
 				config = pl.extend({
 						theme: null,
 						databases: []
 					}, 
 					readConfig
 				);
-				
-				pl.BroadcastActions.settingsLoaded();			
-				notify();	
-			});
+			}
+			else {
+				console.log(TAG, 'Error while loading configuration. Initializing to empty.', err);
+				readConfig = {};
+			}
+			
+			pl.BroadcastActions.settingsLoaded();			
+			notify();
 	};
 	
 	var setTheme = function(theme) {
