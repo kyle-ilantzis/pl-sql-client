@@ -7,7 +7,6 @@
     "any-db": "*",
     "any-db-mysql": "*",
     "any-db-postgres": "*",
-    "any-db-sqlite3": "*",
     "mkdirp": "^0.5.1",
     "moment": "^2.4.0",
     "node-watch": "^0.3.4",
