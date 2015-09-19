@@ -43,8 +43,6 @@
 					case pl.DbTypes.DB_TYPE_MYSQL:
 					case pl.DbTypes.DB_TYPE_POSTGRES:
 						return <pl.DbEditFields ref="dbEditFields" db={db}/>;
-					case pl.DbTypes.DB_TYPE_SQLITE3:
-						return <pl.DbSqlite3EditFields ref="dbEditFields" db={db}/>;
 					default:
 						console.log(TAG,"can't create fields for dbType:",db.dbType);
 						return;

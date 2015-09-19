@@ -19,8 +19,6 @@
 					case pl.DbTypes.DB_TYPE_MYSQL:
 					case pl.DbTypes.DB_TYPE_POSTGRES:
 						return <pl.DbItemFields db={db}/>
-					case pl.DbTypes.DB_TYPE_SQLITE3:
-						return <pl.DbSqlite3ItemFields db={db}/>
 					default:
 						return;
 				}
