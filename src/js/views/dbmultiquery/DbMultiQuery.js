@@ -51,10 +51,14 @@
 						 <pl.DbError key={key(i)} queryResult={queryResult}/>:
 						 <pl.DbQuery key={key(i)} queryResult={queryResult}/>;
 			};
-
+			
 			return <div>
 				<pl.DbInputSql/>
-				{this.state.multiQueryResult.results.map(createDbQuery)}
+				{
+					this.state.multiQueryResult.error ?
+						<pl.CmdError error={this.state.multiQueryResult.error}/> :
+						that.state.multiQueryResult.results.map(createDbQuery)
+				}
 			</div>;
 		}
 	});
