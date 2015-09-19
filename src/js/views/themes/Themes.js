@@ -39,17 +39,14 @@
 
 		var isTheme = function(t) { return jQuery(t).data("theme") === theme; };
 
-		var $maybeTheme = $themes
+		var $theTheme = $themes
 			.filter(function(_,t) { return isTheme(t); });
-			
-		var $theTheme = $maybeTheme.length > 0 ? $maybeTheme : $defaultTheme;
-			
-		$theTheme
-			.attr("rel","stylesheet");
-			
-		$themes
-			.filter(function(_,t) { return !isTheme(t); })
-			.attr("rel",null);	
+						
+		var $otherThemes = $themes
+			.filter(function(_,t) { return !isTheme(t); });
+						
+		$theTheme.attr("rel","stylesheet");			
+		$otherThemes.attr("rel",null);			
 	};
 	
 	pl.Themes = {
