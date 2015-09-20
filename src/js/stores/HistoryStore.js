@@ -16,29 +16,65 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-(function(pl) {	
-	var Dexie = require('dexie');
+(function(pl) {
 	
 	var TAG = "HistoryStore:::";
 	var NAME = "HistoryStore";
 	
+	var VERSION = 1;
 	var N = 100;
 	
 	var HistoryStore = {		
 		LOAD: "HistoryStore-LOAD"
 	};
 	
-	var db = null;
+	var db = new Dexie(NAME);
 	var queries = [];
 	
 	var notify = pl.observable(HistoryStore);
 	
 	var load = function() {
-		console.log(TAG,"is LOADED");
+		
+		db
+			.version(VERSION)
+			.stores({
+				history: "++id,sql"	
+			});
+			
+		db.open()
+			.catch(function(error) {
+				console.log(TAG, "load error", error);
+			});
+				
+		db.history
+			.toArray(function(allQueries) {
+				queries = allQueries;
+				notify();
+			});
 	};
 	
 	var remember = function(sql) {
-		console.log(TAG,"remembers",sql);
+		
+		if (!sql.trim()) { return; }
+		
+		db.transaction("rw", db.history, function() {
+			db.history.count(function(count) {
+				
+				if ( count >= N ) {					
+					db.history.limit(count - N + 1).delete();
+				}
+				
+				db.history.add({ sql: sql });	
+						
+				db.history.toArray(function(allQueries) {
+					queries = allQueries;
+					notify();
+				});
+			});
+		})
+		.catch(function(error) {
+			console.log(TAG, "remember error", error);	
+		});
 	};
 	
 	pl.Dispatcher.register(NAME, function(action) {
@@ -58,7 +94,7 @@
 	pl.HistoryStore = pl.extend(HistoryStore, {			
 		
 		getQueryHistory: function() {
-			
+			return queries;
 		}
 	});
 })(pl||{});
