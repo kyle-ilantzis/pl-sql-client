@@ -14,7 +14,7 @@ const Errors = {
   ERROR_NO_DATABASE: new Error("No database specified!")
 };
 
-MultiQuery.prototype.Errors = Errors;
+MultiQuery.Errors = Errors;
 
 /**
 * @param command to execute
