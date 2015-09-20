@@ -9,6 +9,13 @@ let anyDB = require('any-db');
 
 let MultiQuery = function() {};
 
+const Errors = {
+  ERROR_QUERY_EMPTY: new Error("Query is empty!"),
+  ERROR_NO_DATABASE: new Error("No database specified!")
+};
+
+MultiQuery.prototype.Errors = Errors;
+
 /**
 * @param command to execute
 * @param command.urls[].url url to use to execute the query
@@ -19,11 +26,11 @@ MultiQuery.prototype.query = command => {
   console.log(TAG, command);
 
   if ((!command.query) || command.query.trim() === ''){
-    return Promise.reject(new Error("Query is empty!"));
+    return Promise.reject(Errors.ERROR_QUERY_EMPTY);
   }
 
   if ((!command.urls) || command.urls.length === 0){
-    return Promise.reject(new Error("No database specified!"));
+    return Promise.reject(Errors.ERROR_NO_DATABASE);
   }
 
   return new Promise( (resolve, reject) => {
