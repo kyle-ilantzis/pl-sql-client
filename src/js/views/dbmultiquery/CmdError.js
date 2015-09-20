@@ -8,16 +8,14 @@
 			
 			var that = this;
 			
-			console.log(MultiQuery.prototype.Errors);
-			
 			var getErrorMsg = function() {
 				
 				switch(that.props.error) {
 					
-					case MultiQuery.prototype.Errors.ERROR_QUERY_EMPTY:
+					case MultiQuery.Errors.ERROR_QUERY_EMPTY:
 						return "Please enter a query command.";
 					
-					case MultiQuery.prototype.Errors.ERROR_NO_DATABASE:
+					case MultiQuery.Errors.ERROR_NO_DATABASE:
 						return "Please add databases to query in the settings page.";
 				}
 			};
