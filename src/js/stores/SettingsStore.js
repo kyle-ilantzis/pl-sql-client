@@ -95,7 +95,10 @@
 
 	var setTheme = function(theme) {
 
-		config.theme = theme;
+		var i = pl.Themes.getThemes().indexOf(theme);
+
+		config.theme = i >= 0 ? theme : pl.Themes.getDefaultTheme();
+		
 		saveConfig();
 		notify();
 	};
@@ -103,6 +106,7 @@
 	var setDatabases = function() {
 
 		config.databases = pl.DbItemStore.getDatabases();
+		
 		saveConfig();
 		notify();
 	};
@@ -128,7 +132,7 @@
 	pl.SettingsStore = pl.extend(SettingsStore, {
 
 		getTheme: function() {
-			return config.theme;
+			return config.theme || pl.Themes.getDefaultTheme();
 		},
 
 		getDatabases: function() {
