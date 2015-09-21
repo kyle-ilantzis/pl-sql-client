@@ -2,13 +2,32 @@
 	
 	var TAG = "Themes:::";
 	
-	var THEME_LIGHT = "light";
-	var THEME_DARK = "dark";
-	var THEMES = ["light", "dark"];
-	var THEME_DEFAULT = THEME_LIGHT;
+	var $themes = jQuery();
+	
+	var $defaultTheme;
+	
+	var defaultTheme;
+	var themes = [];
 	
 	var load = function() {
-		pl.SettingsStore.addChangeListener(onSettingsChange);		
+		
+		$themes = jQuery("link[data-theme]");
+		
+		$defaultTheme = $themes
+						.filter('[data-theme-default]')
+						.first();
+		
+		defaultTheme = $defaultTheme.data("theme");
+		
+		themes = $themes.map(function(_,theme) {
+					return jQuery(theme).data("theme");
+				 })
+				 .get();
+		
+		console.log(TAG,"available themes",themes,"default theme",$defaultTheme.data("theme"));
+		
+		pl.SettingsStore.addChangeListener(onSettingsChange);
+		
 		setTheme(pl.SettingsStore.getTheme());	
 	};
 	
@@ -17,22 +36,29 @@
 	};
 	
 	var setTheme = function(theme) {
-		
-		var i = THEMES.indexOf(theme);
-		var hasTheme = i >= 0;
-		
-		var newTheme = hasTheme ? theme : THEME_DEFAULT;
-		
-		var html = document.body.parentElement;		
-		html.className = newTheme;
+
+		var isTheme = function(t) { return jQuery(t).data("theme") === theme; };
+
+		var $theTheme = $themes
+			.filter(function(_,t) { return isTheme(t); });
+						
+		var $otherThemes = $themes
+			.filter(function(_,t) { return !isTheme(t); });
+						
+		$theTheme.attr("rel","stylesheet");			
+		$otherThemes.attr("rel",null);			
 	};
 	
 	pl.Themes = {
 		
 		load: load,
 		
+		getDefaultTheme: function() {
+			return defaultTheme;
+		},
+		
 		getThemes: function() {
-			return THEMES;
+			return themes;
 		}
 	};
 })(pl||{});
