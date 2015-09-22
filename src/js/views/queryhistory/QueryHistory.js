@@ -47,6 +47,11 @@
             }
         },
         
+        onQueryHistoryListClick: function(e) {
+            // parent might otherwise toggle query history
+            e.stopPropagation();
+        },
+        
         onQueryHistoryBtnClick: function() {
             this.toggleQueryHistory();
         },
@@ -58,8 +63,13 @@
         
         render: function() {
             
+            var createHistoryItem = function(item) {
+                return <div className="query" key={item.id}><pre>{item.sql}</pre></div>;
+            }
+            
             return <div className={"QueryHistory" + " " + this.state.anim} onClick={this.onQueryHistoryClick}>                
-                <div className="QueryHistoryList">                    
+                <div className="QueryHistoryList" onClick={this.onQueryHistoryListClick}>
+                    {pl.HistoryStore.getQueryHistory().map(createHistoryItem)}                     
                 </div>
                 <div className="QueryHistoryBtn" onClick={this.onQueryHistoryBtnClick}>
                     <a href="#"><span></span></a>

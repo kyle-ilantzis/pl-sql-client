@@ -41,17 +41,55 @@
         width: @screen-xs-max/2;
         height: 100%;
         
-        background: white;
-        border: 1px black solid;
+        background: @popover-bg;
+        
+        border-top: @popover-border-color 1px solid;
+        border-right: @popover-border-color 1px solid;
+        
+        overflow-y: auto;
+        
+        .query {
+            
+            padding: 1em;
+            border-bottom: @popover-border-color 1px solid;
+            
+            &:hover {
+                cursor: pointer;
+                background-color: @list-group-hover-bg;
+            }
+            
+            &:last-child {
+                border-bottom: 0;
+            }
+        }
     }
     
     .QueryHistoryBtn {
         
         float: left;
-        padding: 1em;
         
-        background: red;
-        border: 1px red solid;
+        padding: 0.75em;
+        
+        color: @navbar-default-link-color;
+        
+        background: @popover-bg;
+        border: @popover-border-color 1px solid;
+        
+        margin-left: -2px;
+        border-left: @popover-bg 1px solid;
+        
+        border-radius: 0 @border-radius-base @border-radius-base 0;
+        
+        &:hover {
+            cursor: pointer;
+            color: @navbar-default-link-hover-color;
+            background-color: @nav-link-hover-bg;
+        }
+        
+        span {
+            .glyphicon();
+            .glyphicon-time();
+        }
     }
 
     .left-transition() {

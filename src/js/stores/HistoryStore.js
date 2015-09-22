@@ -47,6 +47,7 @@
 			});
 				
 		db.history
+			.reverse()
 			.toArray(function(allQueries) {
 				queries = allQueries;
 				notify();
@@ -66,10 +67,12 @@
 				
 				db.history.add({ sql: sql });	
 						
-				db.history.toArray(function(allQueries) {
-					queries = allQueries;
-					notify();
-				});
+				db.history
+					.reverse()
+					.toArray(function(allQueries) {
+						queries = allQueries;
+						notify();
+					});
 			});
 		})
 		.catch(function(error) {
