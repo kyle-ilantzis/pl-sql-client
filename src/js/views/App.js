@@ -23,6 +23,11 @@
 			e.preventDefault();
 		},
 		
+		onQueryHistoryItemClick: function(sql) {
+		
+			console.log(TAG,"query history itm", sql);	
+		},
+		
 		render: function() {
 			
 			var that = this;
@@ -54,7 +59,7 @@
 			
 				<div className={multiquery("show", "hidden")}>
 					<div className="app-query-wrap">
-						<pl.QueryHistory/>
+						<pl.QueryHistory onQueryHistoryItemClick={this.onQueryHistoryItemClick}/>
 						<pl.DbMultiQuery/>
 					</div>
 				</div>

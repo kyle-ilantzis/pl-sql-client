@@ -48,8 +48,19 @@
         },
         
         onQueryHistoryListClick: function(e) {
-            // parent might otherwise toggle query history
-            e.stopPropagation();
+            
+            var target = e.target;
+            
+            if (target.className === "query" || target.tagName == "PRE") {
+                var pre = target.tagName == "PRE" ? target : target.children[0];
+                var sql = pre.innerText;
+                pl.nullToNoop(this.props.onQueryHistoryItemClick)(sql);
+                // parent can toggle query history
+            }
+            else {
+                // parent will otherwise toggle query history
+                e.stopPropagation();
+            }
         },
         
         onQueryHistoryBtnClick: function() {
