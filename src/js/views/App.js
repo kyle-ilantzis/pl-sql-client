@@ -53,12 +53,17 @@
 				</ul>
 			
 				<div className={multiquery("show", "hidden")}>
-					<pl.DbMultiQuery/>
+					<div className="app-query-wrap">
+						<pl.QueryHistory/>
+						<pl.DbMultiQuery/>
+					</div>
 				</div>
 				
 				<div className={dblist("show", "hidden")}>
-					<pl.ThemeSpinner/>
-					<pl.DbList/>
+					<div className="app-settings-wrap">
+						<pl.ThemeSpinner/>
+						<pl.DbList/>	
+					</div>					
 				</div>
 			</div>
 		}
