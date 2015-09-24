@@ -12,20 +12,17 @@
 		},
 		
 		onMultiQueryClick: function(e) {
-			console.log(TAG, "onMuliQueryClick");
 			pl.updateState(this, { view: {$set: MULTIQUERY}});
 			e.preventDefault();
 		},
 		
 		onDbListClick: function(e) {
-			console.log(TAG, "onDbListClick");
 			pl.updateState(this, { view: {$set: DBLIST}});
 			e.preventDefault();
 		},
 		
 		onQueryHistoryItemClick: function(sql) {
-		
-			console.log(TAG,"query history itm", sql);	
+			this.refs.dbMultiQuery.setSql(sql);
 		},
 		
 		render: function() {
@@ -60,7 +57,7 @@
 				<div className={multiquery("show", "hidden")}>
 					<div className="app-query-wrap">
 						<pl.QueryHistory onQueryHistoryItemClick={this.onQueryHistoryItemClick}/>
-						<pl.DbMultiQuery/>
+						<pl.DbMultiQuery ref="dbMultiQuery"/>
 					</div>
 				</div>
 				

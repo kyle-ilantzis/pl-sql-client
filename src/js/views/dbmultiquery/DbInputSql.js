@@ -25,7 +25,11 @@
 		componentDidMount: function() {
 			
 			editor = ace.edit(this.refs.editor.getDOMNode());
-			// FIXME - if pl-sql-client dark theme then use ace chaos theme
+
+			// disables log message "Automatically scrolling cursor ... will be disabled in the next version" 
+			editor.$blockScrolling = Infinity;
+
+			// TODO - editor theme should be based on pl-sql-client current theme.
 			editor.setTheme("ace/theme/sqlserver");
 			editor.getSession().setMode("ace/mode/sql");
 			
@@ -43,6 +47,10 @@
 			pl.DbQueryActions.query(editor.getValue());
 		},
 		
+		setSql: function(sql) {
+			editor.getSession().setValue(sql);
+		},
+
 		render: function() {
 			
 			return <div className="DbInputSql">

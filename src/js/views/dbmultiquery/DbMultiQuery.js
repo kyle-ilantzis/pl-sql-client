@@ -38,6 +38,10 @@
 			pl.updateState(this, { multiQueryResult: {$set: pl.DbQueryStore.getMultiQueryResult()} });
 		},
 
+		setSql: function(sql) {
+			this.refs.dbInputSql.setSql(sql);
+		},
+
 		render: function() {
 
 			var that = this;
@@ -53,7 +57,7 @@
 			};
 			
 			return <div>
-				<pl.DbInputSql/>
+				<pl.DbInputSql ref="dbInputSql"/>
 				{
 					this.state.multiQueryResult.error ?
 						<pl.CmdError error={this.state.multiQueryResult.error}/> :
