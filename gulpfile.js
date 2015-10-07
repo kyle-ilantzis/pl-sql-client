@@ -7,6 +7,7 @@ var react = require('gulp-react');
 var shell = require('gulp-shell');
 var environments = require('gulp-environments');
 var substituter = require('gulp-substituter');
+var gulpFilter = require('gulp-filter');
 var runSequence = require('run-sequence');
 
 var mkdirp = require('mkdirp');
@@ -74,7 +75,17 @@ gulp.task('copy-vendor', function() {
 });
 
 gulp.task('copy-deps', function() {
+  
+  var deps = Object.keys( appInfo.dependencies );
+  
+  var filter = gulpFilter(function(file) {
+    var parts = file.relative.split(path.sep);
+    var dep = parts[0];
+    return deps.indexOf( dep ) >= 0;
+  });
+  
   return gulp.src('node_modules/**/**')
+    .pipe(filter)
     .pipe(gulp.dest(output_dir() + '/node_modules'));
 });
 
@@ -112,7 +123,7 @@ gulp.task('package', function(){
   var nw = new NwBuilder({
     files: output_dir() + '/**/**',
     platforms: [/*'osx64', 'win64',*/ 'linux64'],
-    version: appInfo.dependencies.nw,
+    version: appInfo.devDependencies.nw,
     buildDir: 'dist',
     cacheDir: '.cache',
     buildType: 'versioned',
