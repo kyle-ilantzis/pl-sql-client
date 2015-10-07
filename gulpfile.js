@@ -1,36 +1,65 @@
+var fs = require('fs');
+var path = require('path');
+
 var gulp = require('gulp');
 var less = require('gulp-less');
-var path = require('path');
 var react = require('gulp-react');
 var shell = require('gulp-shell');
-var fs = require('fs');
-var runSequence = require('run-sequence');
 var environments = require('gulp-environments');
 var substituter = require('gulp-substituter');
-var NwBuilder = require('nw-builder');
+var runSequence = require('run-sequence');
+
 var mkdirp = require('mkdirp');
+var rimraf = require('rimraf');
+var NwBuilder = require('nw-builder');
+
+function readAll(file) {
+  return fs.readFileSync(file, {encoding: 'utf8'});
+}
+
+function readAllJSON(file) {
+  return JSON.parse(readAll(file));
+}
 
 var devMode = environments.development;
 var prodMode = environments.production;
 
-var cfg = !fs.existsSync('gulpconfig.json') ? {} : JSON.parse( fs.readFileSync('gulpconfig.json', {encoding: 'utf8'}) );
-var appInfo = JSON.parse( fs.readFileSync('package.json', {encoding: 'utf8'}) );
+var cfg = readAllJSON('gulpconfig.json')
+var appInfo = readAllJSON('package.json')
 
+var base_output_dir = './build';
 var bootstrap = path.join(__dirname, 'vendor', 'bootstrap-3.3.5', 'less');
 var bootswatch = path.join(__dirname, 'vendor', 'bootswatch');
 var nw = cfg.nw || './node_modules/nw/bin/nw';
 
 function output_dir(){
   if (devMode()){
-    return "./build/debug";
+    return path.join(base_output_dir, 'debug');
   }
 
   if (prodMode()){
-    return "./build/release";
+    return path.join(base_output_dir, 'release')
   }
 
   throw new Error('Unhandled environment!');
 }
+
+gulp.task('copy-index', function(){
+  if (devMode()){
+    console.log('In development mode, including watch statement.');
+    var watchStatement = readAll('src/html/watch.html');
+
+    return gulp.src('src/html/index.html')
+      .pipe(substituter({
+          watch: watchStatement
+      }))
+      .pipe(gulp.dest(output_dir()));
+  } else {
+    console.log('Not in development mode, skipping watch statement.');
+    return gulp.src('src/html/index.html')
+      .pipe(gulp.dest(output_dir()));
+  }
+});
 
 gulp.task('copy-appInfo', function(){
   mkdirp(output_dir(), function(err){
@@ -64,38 +93,20 @@ gulp.task('jsx', function(){
         .pipe(gulp.dest(output_dir()));
 });
 
-gulp.task('serve', shell.task([
-  nw + ' ' + output_dir() + ' --debug'
-]));
-
-gulp.task('copy-index', function(){
-  if (devMode()){
-    console.log('In development mode, including watch statement.');
-    var watchStatement = fs.readFileSync('src/html/watch.html', {encoding: 'utf8'});
-
-    return gulp.src('src/html/index.html')
-      .pipe(substituter({
-          watch: watchStatement
-      }))
-      .pipe(gulp.dest(output_dir()));
-  } else {
-    console.log('Not in development mode, skipping watch statement.');
-    return gulp.src('src/html/index.html')
-      .pipe(gulp.dest(output_dir()));
-  }
-});
-
 gulp.task('watch', function(){
   gulp.watch('./src/js/**', ['jsx']);
   gulp.watch('./src/less/**', ['theme']);
 });
 
-gulp.task('start', ['copy-index', 'copy-appInfo', 'copy-vendor', 'themes', 'jsx', 'watch'], function(done){
-  runSequence(
-    'serve',
-    done
-  );
+gulp.task('set-prod-mode', function(){
+  environments.current(prodMode);
 });
+
+gulp.task('clean', function() {
+  rimraf.sync(base_output_dir);
+});
+
+gulp.task('compile', ['copy-index', 'copy-appInfo', 'copy-vendor', 'copy-deps', 'themes', 'jsx']);
 
 gulp.task('package', function(){
   var nw = new NwBuilder({
@@ -115,12 +126,19 @@ gulp.task('package', function(){
 
 });
 
-gulp.task('set-prod-mode', function(){
-  environments.current(prodMode);
+gulp.task('dist', function(cb){
+    runSequence('set-prod-mode', ['set-prod-mode', 'compile'], 'package', cb);
 });
 
-gulp.task('dist', function(cb){
-    runSequence('set-prod-mode', ['set-prod-mode', 'copy-index', 'copy-appInfo', 'copy-vendor', 'copy-deps', 'themes', 'jsx'], 'package', cb);
+gulp.task('start', ['compile', 'watch'], function(done){
+  runSequence(
+    'serve',
+    done
+  );
 });
+
+gulp.task('serve', shell.task([
+  nw + ' ' + output_dir() + ' --debug'
+]));
 
 gulp.task('default', ['start']);
