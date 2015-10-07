@@ -17,18 +17,22 @@ var NwBuilder = require('nw-builder');
 var NwVersions = require('nw-builder/lib/versions');
 
 function readAll(file) {
-  return fs.readFileSync(file, {encoding: 'utf8'});
+  return !fs.existsSync(file) ? null : fs.readFileSync(file, {encoding: 'utf8'});
 }
-
 function readAllJSON(file) {
-  return JSON.parse(readAll(file));
+  var read = readAll(file);
+  return read === null ? {} : JSON.parse( read );
 }
 
 var devMode = environments.development;
 var prodMode = environments.production;
 
-var cfg = readAllJSON('gulpconfig.json')
-var appInfo = readAllJSON('package.json')
+var cfg = readAllJSON('gulpconfig.json');
+var appInfo = readAllJSON('package.json');
+
+if (! appInfo.dependencies) {
+  throw new Error('Invalid package.json');
+}
 
 var base_output_dir = './build';
 var bootstrap = path.join(__dirname, 'vendor', 'bootstrap-3.3.5', 'less');
@@ -42,21 +46,21 @@ function output_dir(){
   }
 
   if (prodMode()){
-    return path.join(base_output_dir, 'release')
+    return path.join(base_output_dir, 'release');
   }
 
   throw new Error('Unhandled environment!');
 }
 
 function findNwVersion(version) {
-  
+
   return new Promise(function(resolve, reject) {
-    
+
     NwVersions.getVersions(nwDownloadUrl)
       .then(function(versions) {
-          
+
           var satisfying = semver.maxSatisfying(versions,version);
-          
+
           if (satisfying !== null) {
             resolve(satisfying);
           }
@@ -65,8 +69,8 @@ function findNwVersion(version) {
           }
       })
       .catch(function(err) {
-        reject(err);  
-      });   
+        reject(err);
+      });
   });
 }
 
@@ -100,15 +104,15 @@ gulp.task('copy-vendor', function() {
 });
 
 gulp.task('copy-deps', function() {
-  
+
   var deps = Object.keys( appInfo.dependencies );
-  
+
   var filter = gulpFilter(function(file) {
     var parts = file.relative.split(path.sep);
     var dep = parts[0];
     return deps.indexOf( dep ) >= 0;
   });
-  
+
   return gulp.src('node_modules/**/**')
     .pipe(filter)
     .pipe(gulp.dest(output_dir() + '/node_modules'));
@@ -144,10 +148,10 @@ gulp.task('clean', function() {
 
 gulp.task('compile', ['copy-index', 'copy-appInfo', 'copy-vendor', 'copy-deps', 'themes', 'jsx']);
 
-gulp.task('package', function(){
+gulp.task('package', function(cb){
   var nw = new NwBuilder({
     files: output_dir() + '/**/**',
-    platforms: [/*'osx64', 'win64',*/ 'linux64'],
+    platforms: ['osx64', 'win64', 'linux64'],
     version: appInfo.devDependencies.nw,
     buildDir: 'dist',
     cacheDir: '.cache',
@@ -156,8 +160,9 @@ gulp.task('package', function(){
 
   nw.build().then(function () {
      console.log('Packaging done!');
+     cb();
   }).catch(function (error) {
-      console.error(error);
+      cb(error);
   });
 
 });
@@ -179,16 +184,16 @@ gulp.task('serve', shell.task([
 
 gulp.task('default', ['start']);
 
-/** 
+/**
  * Tests for findNwVersion
  * $> gulp test-nwversions
  */
 gulp.task('test-nwversions', function() {
-  
-  var test = function(v) { 
+
+  var test = function(v) {
     return function(x) { console.log("version",v,"result",x); };
   };
-  
+
   findNwVersion("apple").then(test("apple"),test("apple"));
   findNwVersion("0.11.5").then(test("0.11.5"),test("0.11.5"));
   findNwVersion("^0.11.5").then(test("^0.11.5"),test("^0.11.5"));
