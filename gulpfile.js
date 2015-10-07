@@ -12,7 +12,9 @@ var runSequence = require('run-sequence');
 
 var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
+var semver = require('semver');
 var NwBuilder = require('nw-builder');
+var NwVersions = require('nw-builder/lib/versions');
 
 function readAll(file) {
   return fs.readFileSync(file, {encoding: 'utf8'});
@@ -31,6 +33,7 @@ var appInfo = readAllJSON('package.json')
 var base_output_dir = './build';
 var bootstrap = path.join(__dirname, 'vendor', 'bootstrap-3.3.5', 'less');
 var bootswatch = path.join(__dirname, 'vendor', 'bootswatch');
+var nwDownloadUrl = 'http://dl.nwjs.io/';
 var nw = cfg.nw || './node_modules/nw/bin/nw';
 
 function output_dir(){
@@ -43,6 +46,28 @@ function output_dir(){
   }
 
   throw new Error('Unhandled environment!');
+}
+
+function findNwVersion(version) {
+  
+  return new Promise(function(resolve, reject) {
+    
+    NwVersions.getVersions(nwDownloadUrl)
+      .then(function(versions) {
+          
+          var satisfying = semver.maxSatisfying(versions,version);
+          
+          if (satisfying !== null) {
+            resolve(satisfying);
+          }
+          else {
+            reject('No nw version for ' + version + ' found in ' + versions);
+          }
+      })
+      .catch(function(err) {
+        reject(err);  
+      });   
+  });
 }
 
 gulp.task('copy-index', function(){
@@ -153,3 +178,20 @@ gulp.task('serve', shell.task([
 ]));
 
 gulp.task('default', ['start']);
+
+/** 
+ * Tests for findNwVersion
+ * $> gulp test-nwversions
+ */
+gulp.task('test-nwversions', function() {
+  
+  var test = function(v) { 
+    return function(x) { console.log("version",v,"result",x); };
+  };
+  
+  findNwVersion("apple").then(test("apple"),test("apple"));
+  findNwVersion("0.11.5").then(test("0.11.5"),test("0.11.5"));
+  findNwVersion("^0.11.5").then(test("^0.11.5"),test("^0.11.5"));
+  findNwVersion("0.12.3").then(test("0.12.3"),test("0.12.3"));
+  findNwVersion("^0.12.3").then(test("^0.12.3"),test("^0.12.3"));
+});
