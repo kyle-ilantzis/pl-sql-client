@@ -22,10 +22,6 @@ var prodMode = environments.production;
 var cfg = readAllJSON('gulpconfig.json');
 var appInfo = readAllJSON('package.json');
 
-if (! appInfo.dependencies) {
-  throw new Error('Invalid package.json');
-}
-
 var base_output_dir = './build';
 var bootstrap = path.join(__dirname, 'vendor', 'bootstrap-3.3.5', 'less');
 var bootswatch = path.join(__dirname, 'vendor', 'bootswatch');
@@ -106,7 +102,7 @@ gulp.task('copy-vendor', function() {
 
 gulp.task('copy-deps', function() {
 
-  var deps = Object.keys( appInfo.dependencies );
+  var deps = Object.keys( appInfo.dependencies || {} );
 
   var filter = gulpFilter(function(file) {
     var parts = file.relative.split(path.sep);
