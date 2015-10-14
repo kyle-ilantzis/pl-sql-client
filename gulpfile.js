@@ -16,14 +16,6 @@ var semver = require('semver');
 var NwBuilder = require('nw-builder');
 var NwVersions = require('nw-builder/lib/versions');
 
-function readAll(file) {
-  return !fs.existsSync(file) ? null : fs.readFileSync(file, {encoding: 'utf8'});
-}
-function readAllJSON(file) {
-  var read = readAll(file);
-  return read === null ? {} : JSON.parse( read );
-}
-
 var devMode = environments.development;
 var prodMode = environments.production;
 
@@ -39,6 +31,15 @@ var bootstrap = path.join(__dirname, 'vendor', 'bootstrap-3.3.5', 'less');
 var bootswatch = path.join(__dirname, 'vendor', 'bootswatch');
 var nwDownloadUrl = 'http://dl.nwjs.io/';
 var nw = cfg.nw || './node_modules/nw/bin/nw';
+
+function readAll(file) {
+  return !fs.existsSync(file) ? null : fs.readFileSync(file, {encoding: 'utf8'});
+}
+
+function readAllJSON(file) {
+  var read = readAll(file);
+  return read === null ? {} : JSON.parse( read );
+}
 
 function output_dir(){
   if (devMode()){
@@ -149,22 +150,23 @@ gulp.task('clean', function() {
 gulp.task('compile', ['copy-index', 'copy-appInfo', 'copy-vendor', 'copy-deps', 'themes', 'jsx']);
 
 gulp.task('package', function(cb){
-  var nw = new NwBuilder({
-    files: output_dir() + '/**/**',
-    platforms: ['osx64', 'win64', 'linux64'],
-    version: appInfo.devDependencies.nw,
-    buildDir: 'dist',
-    cacheDir: '.cache',
-    buildType: 'versioned',
-  });
+  findNwVersion(appInfo.devDependencies.nw).then(function(foundVersion){
+    var nw = new NwBuilder({
+      files: output_dir() + '/**/**',
+      platforms: ['osx64', 'win64', 'linux64'],
+      version: foundVersion,
+      buildDir: 'dist',
+      cacheDir: '.cache',
+      buildType: 'versioned',
+    });
 
-  nw.build().then(function () {
-     console.log('Packaging done!');
-     cb();
-  }).catch(function (error) {
+    nw.build().then(function () {
+      console.log('Packaging done!');
+      cb();
+    }).catch(function (error) {
       cb(error);
+    });
   });
-
 });
 
 gulp.task('dist', function(cb){
@@ -183,20 +185,3 @@ gulp.task('serve', shell.task([
 ]));
 
 gulp.task('default', ['start']);
-
-/**
- * Tests for findNwVersion
- * $> gulp test-nwversions
- */
-gulp.task('test-nwversions', function() {
-
-  var test = function(v) {
-    return function(x) { console.log("version",v,"result",x); };
-  };
-
-  findNwVersion("apple").then(test("apple"),test("apple"));
-  findNwVersion("0.11.5").then(test("0.11.5"),test("0.11.5"));
-  findNwVersion("^0.11.5").then(test("^0.11.5"),test("^0.11.5"));
-  findNwVersion("0.12.3").then(test("0.12.3"),test("0.12.3"));
-  findNwVersion("^0.12.3").then(test("^0.12.3"),test("^0.12.3"));
-});
