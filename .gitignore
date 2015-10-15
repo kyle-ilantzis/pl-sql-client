@@ -8,3 +8,5 @@ userconfig.json
 .idea
 *.iml
 *.lnk
+.cache
+dist/
