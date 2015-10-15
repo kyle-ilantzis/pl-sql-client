@@ -1,4 +1,4 @@
-/*
+/*!
 	pl-sql-client - Query many database at once
     Copyright (C) 2015  Kyle Ilantzis, Pier-Luc Caron St-Pierre
 
@@ -16,27 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-@import "bootstrap";
-
-@nbsp: "\00a0";
-
-@spacer: 2em;
-@small-spacer: @spacer/2;
-@editor-width: 100%;
-@editor-min-height: 125px;
-@editor-height: 200px;
-
-@import "views/App.less";
-
-@import "views/settings/ThemeSpinner.less";
-
-@import "views/dblist/DbList.less";
-@import "views/dblist/DbEditItem.less";
-@import "views/dblist/DbItem.less";
-
-@import "views/dbmultiquery/DbInputSql.less";
-@import "views/dbmultiquery/CmdError.less";
-@import "views/dbmultiquery/DbError.less";
-@import "views/dbmultiquery/DbQuery.less";
-
-@import "views/queryhistory/QueryHistory.less";
+(function(pl) {
+	
+	pl.HistoryActions = {
+		
+		load: function() {
+			pl.Dispatcher.dispatch({ 
+				actionType: pl.HistoryStore.LOAD
+			});
+		}	
+	};
+})(pl||{});
