@@ -21,8 +21,11 @@
 	var TAG = "HistoryStore:::";
 	var NAME = "HistoryStore";
 	
+	// The database version, useful during database updgrades
 	var VERSION = 1;
-	var N = 100;
+
+	// The maximum number of queries to remember
+	var HISTORY_LIMIT = 100;
 	
 	var HistoryStore = {		
 		LOAD: "HistoryStore-LOAD"
@@ -38,6 +41,15 @@
 		db
 			.version(VERSION)
 			.stores({
+				/**
+				 * The history table stores user's past queries.
+				 * This table will be accessible via `db.history`.
+				 *
+				 * ++id:	An auto-incremented primary key used only for sorting.
+				 * 			The bigger the id the newer the query.
+				 *
+				 * sql: 	The query the user entered.
+				 */
 				history: "++id,sql"	
 			});
 			
@@ -61,8 +73,8 @@
 		db.transaction("rw", db.history, function() {
 			db.history.count(function(count) {
 				
-				if ( count >= N ) {					
-					db.history.limit(count - N + 1).delete();
+				if ( count >= HISTORY_LIMIT ) {
+					db.history.limit(count - HISTORY_LIMIT + 1).delete();
 				}
 				
 				db.history.add({ sql: sql });	
@@ -89,8 +101,8 @@
 				break;
 				
 			case pl.DbQueryStore.QUERY:
-                remember(action.sql);
-                break;
+				remember(action.sql);
+				break;
 		}
 	});
 	
