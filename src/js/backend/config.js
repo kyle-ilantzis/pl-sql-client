@@ -8,7 +8,7 @@ let path = require('path');
 let watch = require('node-watch');
 
 const DEFAULT_CONFIG_FOLDER = '.';
-const DEFAULT_CONFIG_FILE = 'config.json';
+const DEFAULT_CONFIG_FILE = 'config.0.json';
 const DEFAULT_ENCODING = 'utf8';
 
 /**
