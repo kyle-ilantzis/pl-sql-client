@@ -149,7 +149,7 @@ gulp.task('clean', function() {
   rimraf.sync(base_output_dir);
 });
 
-gulp.task('compile', ['copy-index', 'copy-appInfo', 'copy-vendor', 'copy-deps', 'themes', 'jsx']);
+gulp.task('compile', ['copy-index', 'copy-appInfo', 'copy-vendor', 'themes', 'jsx']);
 
 gulp.task('package', function(cb){
   findNwVersion(appInfo.devDependencies.nw).then(function(foundVersion){
@@ -172,7 +172,7 @@ gulp.task('package', function(cb){
 });
 
 gulp.task('dist', function(cb){
-    runSequence('set-prod-mode', ['set-prod-mode', 'compile'], 'package', cb);
+    runSequence('set-prod-mode', ['set-prod-mode', 'compile'], 'copy-deps', 'package', cb);
 });
 
 gulp.task('start', ['compile', 'watch'], function(done){
