@@ -90,10 +90,21 @@ gulp.task('copy-index', function(){
   }
 });
 
+function transformAppInfo(appInfo){
+  if (prodMode()){
+    gutil.log('In production mode, removing toolbar.');
+    appInfo.window.toolbar = false;
+  }
+
+  return appInfo;
+}
+
 gulp.task('copy-appInfo', function(){
+  processedAppInfo = transformAppInfo(appInfo);
+
   mkdirp(output_dir(), function(err){
     if (err) throw err;
-    fs.writeFileSync(output_dir() + '/package.json', JSON.stringify(appInfo, null, 2));
+    fs.writeFileSync(output_dir() + '/package.json', JSON.stringify(processedAppInfo, null, 2));
   });
 });
 
@@ -149,7 +160,7 @@ gulp.task('clean', function() {
   rimraf.sync(base_output_dir);
 });
 
-gulp.task('compile', ['copy-index', 'copy-appInfo', 'copy-vendor', 'copy-deps', 'themes', 'jsx']);
+gulp.task('compile', ['copy-index', 'copy-appInfo', 'copy-vendor', 'themes', 'jsx']);
 
 gulp.task('package', function(cb){
   findNwVersion(appInfo.devDependencies.nw).then(function(foundVersion){
@@ -172,7 +183,7 @@ gulp.task('package', function(cb){
 });
 
 gulp.task('dist', function(cb){
-    runSequence('set-prod-mode', ['set-prod-mode', 'compile'], 'package', cb);
+    runSequence('set-prod-mode', ['set-prod-mode', 'compile'], 'copy-deps', 'package', cb);
 });
 
 gulp.task('start', ['compile', 'watch'], function(done){
