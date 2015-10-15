@@ -28,9 +28,12 @@
 
     var multiQueryIdSeq = 0;
     var multiQueryResult = { id: 0, results: [] };
+
+    var isQuerying = false;
+
     var multiquery = new MultiQuery();
 
-    var notify = pl.observable(DbQueryStore);    
+    var notify = pl.observable(DbQueryStore);
 
     var query = function(sql) {
 
@@ -38,21 +41,25 @@
             urls: pl.DbItemStore.getDbUrls(),
             query: sql
         };
-        
+
         var final = function(result,error) {
-            
+
             var nextId = String(multiQueryIdSeq++)
 
             result.forEach(function(queryResult, i) {
                 queryResult.id = nextId + "_" + i;
             });
-            
+
+            isQuerying = false;
             multiQueryResult = { id:  nextId, results: result, error: error };
-            
+
             console.log(TAG,"multiQueryResult", multiQueryResult);
-            
+
             notify();
         };
+
+        isQuerying = true;
+        notify();
 
         multiquery.query(cmd).then(
             function(result) {
@@ -75,6 +82,10 @@
     });
 
     pl.DbQueryStore = pl.extend(DbQueryStore, {
+
+        isQuerying: function() {
+            return isQuerying;
+        },
 
         getMultiQueryResult: function() {
             return multiQueryResult;

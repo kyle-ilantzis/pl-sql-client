@@ -17,50 +17,55 @@
 */
 
 (function(pl){
-	
+
 	pl.DbInputSql = React.createClass({
-		
+
 		editor: null,
-		
+
 		componentDidMount: function() {
-			
+
 			editor = ace.edit(this.refs.editor.getDOMNode());
 
-			// disables log message "Automatically scrolling cursor ... will be disabled in the next version" 
+			// disables log message "Automatically scrolling cursor ... will be disabled in the next version"
 			editor.$blockScrolling = Infinity;
 
 			// TODO - editor theme should be based on pl-sql-client current theme.
 			editor.setTheme("ace/theme/sqlserver");
 			editor.getSession().setMode("ace/mode/sql");
-			
-			jQuery(".editor-wrap", this.getDOMNode()).resizable({				
+
+			jQuery(".editor-wrap", this.getDOMNode()).resizable({
 				handles: "s",
 				resize: function() { editor.resize(); }
 			});
 		},
-		
+
 		componentWillUnmount: function() {
 			if (editor) { editor.destroy(); }
 		},
-		
+
 		onClick: function() {
+
+			if (this.props.isQuerying) {
+				return;
+			}
+
 			pl.DbQueryActions.query(editor.getValue());
 		},
-		
+
 		setSql: function(sql) {
 			editor.getSession().setValue(sql);
 		},
 
 		render: function() {
-			
+
 			return <div className="DbInputSql">
-				
+
 				<div className="editor-wrap">
 					<div ref="editor" className="editor"></div>
 				</div>
-				
+
 				<div className="run-query-btn-wrap">
-					<button className="run-query-btn" onClick={this.onClick}>Run Query</button>
+					<button className={"run-query-btn" + (this.props.isQuerying ? " disabled" : "")} onClick={this.onClick}>Run Query</button>
 				</div>
 			</div>;
 		}

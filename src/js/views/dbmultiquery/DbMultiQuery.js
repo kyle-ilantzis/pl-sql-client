@@ -23,7 +23,10 @@
 	pl.DbMultiQuery = React.createClass({
 
 		getInitialState: function() {
-			return { multiQueryResult: pl.DbQueryStore.getMultiQueryResult() };
+			return {
+				isQuerying: pl.DbQueryStore.isQuerying(),
+				multiQueryResult: pl.DbQueryStore.getMultiQueryResult()
+			};
 		},
 
 		componentDidMount: function() {
@@ -35,7 +38,10 @@
 		},
 
 		onChange: function() {
-			pl.updateState(this, { multiQueryResult: {$set: pl.DbQueryStore.getMultiQueryResult()} });
+			pl.updateState(this, {
+				isQuerying: {$set: pl.DbQueryStore.isQuerying()},
+				multiQueryResult: {$set: pl.DbQueryStore.getMultiQueryResult()}
+			});
 		},
 
 		setSql: function(sql) {
@@ -55,14 +61,27 @@
 						 <pl.DbError key={key(i)} queryResult={queryResult}/>:
 						 <pl.DbQuery key={key(i)} queryResult={queryResult}/>;
 			};
-			
-			return <div>
-				<pl.DbInputSql ref="dbInputSql"/>
-				{
-					this.state.multiQueryResult.error ?
-						<pl.CmdError error={this.state.multiQueryResult.error}/> :
-						that.state.multiQueryResult.results.map(createDbQuery)
+
+			var createOutput = function(isQuerying, multiQueryResult) {
+
+				console.log(TAG, "createOutput", "isQuerying=", isQuerying, "multiQueryResult=", multiQueryResult);
+
+				if ( isQuerying ) {
+					return <div className="DbMultiQuerySpinner">
+						<span></span>
+					</div>;
 				}
+				else if ( multiQueryResult.error ) {
+					return <pl.CmdError error={multiQueryResult.error}/>;
+				}
+				else {
+					return multiQueryResult.results.map(createDbQuery);
+				}
+			}
+
+			return <div>
+				<pl.DbInputSql ref="dbInputSql" isQuerying={this.state.isQuerying}/>
+				{createOutput(this.state.isQuerying, this.state.multiQueryResult)}
 			</div>;
 		}
 	});
