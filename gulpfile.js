@@ -13,6 +13,7 @@ var gutil = require('gulp-util');
 
 var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
+var map = require('map-stream');
 var semver = require('semver');
 var NwBuilder = require('nw-builder');
 var NwVersions = require('nw-builder/lib/versions');
@@ -113,6 +114,10 @@ gulp.task('copy-deps', function() {
 
   return gulp.src('node_modules/**/**')
     .pipe(filter)
+    .pipe(map(function(file, done){
+      gutil.log('Copying ' + file.relative);
+      done(null, file);
+    }))
     .pipe(gulp.dest(output_dir() + '/node_modules'));
 });
 
