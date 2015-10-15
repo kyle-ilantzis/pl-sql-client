@@ -9,6 +9,7 @@ var environments = require('gulp-environments');
 var substituter = require('gulp-substituter');
 var gulpFilter = require('gulp-filter');
 var runSequence = require('run-sequence');
+var gutil = require('gulp-util');
 
 var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
@@ -73,7 +74,7 @@ function findNwVersion(version) {
 
 gulp.task('copy-index', function(){
   if (devMode()){
-    console.log('In development mode, including watch statement.');
+    gutil.log('In development mode, including watch statement.');
     var watchStatement = readAll('src/html/watch.html');
 
     return gulp.src('src/html/index.html')
@@ -82,7 +83,7 @@ gulp.task('copy-index', function(){
       }))
       .pipe(gulp.dest(output_dir()));
   } else {
-    console.log('Not in development mode, skipping watch statement.');
+    gutil.log('Not in development mode, skipping watch statement.');
     return gulp.src('src/html/index.html')
       .pipe(gulp.dest(output_dir()));
   }
@@ -157,7 +158,7 @@ gulp.task('package', function(cb){
     });
 
     nw.build().then(function () {
-      console.log('Packaging done!');
+      gutil.log('Packaging done!');
       cb();
     }).catch(function (error) {
       cb(error);

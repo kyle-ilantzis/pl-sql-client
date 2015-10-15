@@ -27,6 +27,7 @@
     "gulp-react": "^3.0.1",
     "gulp-shell": "^0.4.3",
     "gulp-substituter": "^0.3.0",
+    "gulp-util": "^3.0.6",
     "gulp-watch": "^4.3.5",
     "nw": "0.12.3",
     "nw-builder": "^2.0.2",
