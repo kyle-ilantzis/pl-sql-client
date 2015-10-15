@@ -39,7 +39,7 @@
   },
   "window": {
     "title": "Pretty Legendary SQL Client",
-    "toolbar": false,
+    "toolbar": true,
     "frame": true,
     "width": 800,
     "height": 400,

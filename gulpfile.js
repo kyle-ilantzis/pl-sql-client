@@ -90,10 +90,21 @@ gulp.task('copy-index', function(){
   }
 });
 
+function transformAppInfo(appInfo){
+  if (prodMode()){
+    gutil.log('In production mode, removing toolbar.');
+    appInfo.window.toolbar = false;
+  }
+
+  return appInfo;
+}
+
 gulp.task('copy-appInfo', function(){
+  processedAppInfo = transformAppInfo(appInfo);
+
   mkdirp(output_dir(), function(err){
     if (err) throw err;
-    fs.writeFileSync(output_dir() + '/package.json', JSON.stringify(appInfo, null, 2));
+    fs.writeFileSync(output_dir() + '/package.json', JSON.stringify(processedAppInfo, null, 2));
   });
 });
 
