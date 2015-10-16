@@ -15,6 +15,7 @@
   "scripts": {
     "start": "gulp"
   },
+  "single-instance": false,
   "webkit": {
     "plugin": true
   },

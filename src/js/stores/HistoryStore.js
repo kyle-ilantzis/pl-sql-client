@@ -17,27 +17,42 @@
 */
 
 (function(pl) {
-	
+
 	var TAG = "HistoryStore:::";
 	var NAME = "HistoryStore";
-	
+
 	// The database version, useful during database updgrades
 	var VERSION = 1;
 
 	// The maximum number of queries to remember
 	var HISTORY_LIMIT = 100;
-	
-	var HistoryStore = {		
+
+	var HistoryStore = {
 		LOAD: "HistoryStore-LOAD"
 	};
-	
+
 	var db = new Dexie(NAME);
 	var queries = [];
-	
+
 	var notify = pl.observable(HistoryStore);
-	
+
+	var logError = function(action, error) {
+		console.log(TAG, action, "error", error);
+	};
+
+	var openDb = function() {
+		db.open()
+			.catch(function(error) {
+				logError("open", error);
+			});
+	};
+
+	var closeDb = function() {
+		db.close();
+	}
+
 	var load = function() {
-		
+
 		db
 			.version(VERSION)
 			.stores({
@@ -50,35 +65,39 @@
 				 *
 				 * sql: 	The query the user entered.
 				 */
-				history: "++id,sql"	
+				history: "++id,sql"
 			});
-			
-		db.open()
-			.catch(function(error) {
-				console.log(TAG, "load error", error);
-			});
-				
+
+		openDb();
+
 		db.history
 			.reverse()
 			.toArray(function(allQueries) {
 				queries = allQueries;
 				notify();
+			})
+			.then(closeDb)
+			.catch(function(error) {
+				closeDb();
+				logError("load", error);
 			});
 	};
-	
+
 	var remember = function(sql) {
-		
+
 		if (!sql.trim()) { return; }
-		
+
+		openDb();
+
 		db.transaction("rw", db.history, function() {
 			db.history.count(function(count) {
-				
+
 				if ( count >= HISTORY_LIMIT ) {
 					db.history.limit(count - HISTORY_LIMIT + 1).delete();
 				}
-				
-				db.history.add({ sql: sql });	
-						
+
+				db.history.add({ sql: sql });
+
 				db.history
 					.reverse()
 					.toArray(function(allQueries) {
@@ -87,27 +106,29 @@
 					});
 			});
 		})
+		.then(closeDb)
 		.catch(function(error) {
-			console.log(TAG, "remember error", error);	
+			closeDb();
+			logError("remember", error);
 		});
 	};
-	
+
 	pl.Dispatcher.register(NAME, function(action) {
-		
+
 		switch(action.actionType) {
-			
+
 			case HistoryStore.LOAD:
 				load();
 				break;
-				
+
 			case pl.DbQueryStore.QUERY:
 				remember(action.sql);
 				break;
 		}
 	});
-	
-	pl.HistoryStore = pl.extend(HistoryStore, {			
-		
+
+	pl.HistoryStore = pl.extend(HistoryStore, {
+
 		getQueryHistory: function() {
 			return queries;
 		}
