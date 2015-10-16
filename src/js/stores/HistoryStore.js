@@ -27,6 +27,9 @@
 	// The maximum number of queries to remember
 	var HISTORY_LIMIT = 100;
 
+	var DB_ACTION_MAX_ATTEMPS = 30;
+	var DB_ACTION_RETRY_WAIT = 500;
+
 	var HistoryStore = {
 		LOAD: "HistoryStore-LOAD"
 	};
@@ -40,15 +43,39 @@
 		console.log(TAG, action, "error", error);
 	};
 
-	var openDb = function() {
-		db.open()
-			.catch(function(error) {
-				logError("open", error);
-			});
-	};
+	var withDb = function(actionName, action) {
 
-	var closeDb = function() {
-		db.close();
+		var itr = function(actionName, action, i) {
+
+			if ( i == 0 ) {
+				return;
+			}
+
+			console.log(TAG, "withDb action", actionName, "attemp", DB_ACTION_MAX_ATTEMPS - i + 1);
+
+			db.open()
+				.catch(function() {
+					console.log(TAG, "open", "error", error);
+				});
+
+			action()
+				.then(function() {
+					db.close();
+				})
+				.catch(function(error) {
+					console.log(TAG, actionName, "error", error);
+					db.close();
+
+					setTimeout(
+						function() {
+							itr(actionName, action, i - 1);
+						},
+						DB_ACTION_RETRY_WAIT
+					);
+				});
+		}
+
+		itr(actionName, action, DB_ACTION_MAX_ATTEMPS);
 	}
 
 	var load = function() {
@@ -68,48 +95,38 @@
 				history: "++id,sql"
 			});
 
-		openDb();
-
-		db.history
-			.reverse()
-			.toArray(function(allQueries) {
-				queries = allQueries;
-				notify();
-			})
-			.then(closeDb)
-			.catch(function(error) {
-				closeDb();
-				logError("load", error);
-			});
+		withDb("load", function() {
+			return db.history
+				.reverse()
+				.toArray(function(allQueries) {
+					queries = allQueries;
+					notify();
+				});
+		});
 	};
 
 	var remember = function(sql) {
 
 		if (!sql.trim()) { return; }
 
-		openDb();
+		withDb("remember", function() {
+			return db.transaction("rw", db.history, function() {
+				db.history.count(function(count) {
 
-		db.transaction("rw", db.history, function() {
-			db.history.count(function(count) {
+					if ( count >= HISTORY_LIMIT ) {
+						db.history.limit(count - HISTORY_LIMIT + 1).delete();
+					}
 
-				if ( count >= HISTORY_LIMIT ) {
-					db.history.limit(count - HISTORY_LIMIT + 1).delete();
-				}
+					db.history.add({ sql: sql });
 
-				db.history.add({ sql: sql });
-
-				db.history
-					.reverse()
-					.toArray(function(allQueries) {
-						queries = allQueries;
-						notify();
-					});
+					db.history
+						.reverse()
+						.toArray(function(allQueries) {
+							queries = allQueries;
+							notify();
+						});
+				});
 			});
-		})
-		.then(closeDb)
-		.catch(function(error) {
-			closeDb();
-			logError("remember", error);
 		});
 	};
 
