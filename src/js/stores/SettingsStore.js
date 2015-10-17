@@ -42,7 +42,7 @@
 
 	var load = function() {
 
-		watcher = new Watcher(gui.App.dataPath, NAME, [], update);
+		watcher = new Watcher(gui.App.dataPath, NAME, update);
 		watcher.watch(update);
 	};
 
