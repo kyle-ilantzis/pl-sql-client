@@ -25,19 +25,21 @@
 
 	var configApi = new Config({
 		directory: gui.App.dataPath,
-		file: 'config.json'
+		file: 'config.0.json'
 	});
 
 	var loaded = false;
 
 	var config = {};
+	var initial = true;
 
 	var SettingsStore = {
 
 		BROADCAST_LOADED: "SettingsStore-BCAST_LOADED",
 
 		LOAD: "SettingsStore-LOAD",
-		SET_THEME: "SettingsStore-SET_THEME"
+		SET_THEME: "SettingsStore-SET_THEME",
+		SET_SIZE: "SettingsStore-SET_SIZE"
 	};
 
 	var notify = pl.observable(SettingsStore);
@@ -58,15 +60,17 @@
 				loaded = true;
 
 			}).then( function(readConfig) {
-				settingsLoaded(null, readConfig);
+				settingsLoaded(null, readConfig, true);
 				loaded = true;
 
 			});
 
-		configApi.watch(settingsLoaded);
+		configApi.watch(function(err, config){
+			settingsLoaded(err, config, false);
+		});
 	};
 
-	var settingsLoaded = function(err, readConfig) {
+	var settingsLoaded = function(err, readConfig, first) {
 
 			if (err && loaded) {
 				console.log(TAG, 'Error while loading configuration.', err);
@@ -86,8 +90,11 @@
 			}
 			else {
 				console.log(TAG, 'Error while loading configuration. Initializing to empty.', err);
+				// review @kyle i think it should be config here and not readConfig
 				readConfig = {};
 			}
+
+			initial = first;
 
 			pl.BroadcastActions.settingsLoaded();
 			notify();
@@ -98,7 +105,16 @@
 		var i = pl.Themes.getThemes().indexOf(theme);
 
 		config.theme = i >= 0 ? theme : pl.Themes.getDefaultTheme();
-		
+
+		saveConfig();
+		notify();
+	};
+
+	var setSize = function(width, height) {
+
+		config.width = width;
+		config.height = height;
+
 		saveConfig();
 		notify();
 	};
@@ -106,7 +122,7 @@
 	var setDatabases = function() {
 
 		config.databases = pl.DbItemStore.getDatabases();
-		
+
 		saveConfig();
 		notify();
 	};
@@ -126,6 +142,10 @@
 			case SettingsStore.SET_THEME:
 				setTheme(action.theme);
 				break;
+
+			case SettingsStore.SET_SIZE:
+				setSize(action.width, action.height);
+				break;
 		}
 	});
 
@@ -137,6 +157,18 @@
 
 		getDatabases: function() {
 			return config.databases;
+		},
+
+		getWidth: function(){
+			return config.width;
+		},
+
+		getHeight: function(){
+			return config.height;
+		},
+
+		isInitial: function(){
+			return initial;
 		}
 	});
 })(pl||{});
