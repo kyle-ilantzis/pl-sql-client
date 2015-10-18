@@ -19,6 +19,7 @@ var NwBuilder = require('nw-builder');
 var NwVersions = require('nw-builder/lib/versions');
 
 var devMode = environments.development;
+var testMode = environments.make("testing");
 var prodMode = environments.production;
 
 var cfg = readAllJSON('gulpconfig.json');
@@ -40,7 +41,7 @@ function readAllJSON(file) {
 }
 
 function output_dir(){
-  if (devMode()){
+  if (devMode() || testMode()){
     return path.join(base_output_dir, 'debug');
   }
 
@@ -74,20 +75,24 @@ function findNwVersion(version) {
 }
 
 gulp.task('copy-index', function(){
-  if (devMode()){
-    gutil.log('In development mode, including watch statement.');
-    var watchStatement = readAll('src/html/watch.html');
 
-    return gulp.src('src/html/index.html')
-      .pipe(substituter({
-          watch: watchStatement
-      }))
-      .pipe(gulp.dest(output_dir()));
+  if (devMode()) {
+    gutil.log('In development mode, including watch statement.');
   } else {
     gutil.log('Not in development mode, skipping watch statement.');
-    return gulp.src('src/html/index.html')
-      .pipe(gulp.dest(output_dir()));
   }
+
+  var mainHtml = devMode() || prodMode() ? readAll('src/html/main.html') : '';
+  var testHtml = testMode() ? readAll('src/html/test.html') : '';
+  var watchHtml = devMode() ? readAll('src/html/watch.html') : '';
+
+  return gulp.src('src/html/index.html')
+          .pipe(substituter({
+            main: mainHtml,
+            test: testHtml,
+            watch: watchHtml
+          }))
+          .pipe(gulp.dest(output_dir()));
 });
 
 function transformAppInfo(appInfo){
@@ -150,6 +155,10 @@ gulp.task('jsx', function(){
 gulp.task('watch', function(){
   gulp.watch('./src/js/**', ['jsx']);
   gulp.watch('./src/less/**', ['theme']);
+});
+
+gulp.task('set-test-mode', function() {
+  environments.current(testMode);
 });
 
 gulp.task('set-prod-mode', function(){
