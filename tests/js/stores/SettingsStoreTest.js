@@ -1,11 +1,17 @@
 QUnit.module('SettingsStoreTest', {
 
-	beforeEach: function() {
+	beforeEach: function(assert) {
 
 		pl.SettingsStore._init();
 
 		pl.Themes._init();
 		pl.Themes.load();
+
+		assert.strictEqual(
+			pl.SettingsStore.getTheme(),
+			pl.Themes.getDefaultTheme(),
+			'before each test theme should start as default theme'
+		);
 	}
 });
 
@@ -15,10 +21,8 @@ QUnit.test('set theme notifies observers', function(assert) {
 
 	var theme = pl.Themes.getThemes()[0];
 
-	assert.strictEqual(pl.SettingsStore.getTheme(), pl.Themes.getDefaultTheme());
-
 	pl.SettingsStore.addChangeListener(function() {
-		assert.strictEqual(pl.SettingsStore.getTheme(), theme);
+		assert.strictEqual(pl.SettingsStore.getTheme(), theme, 'theme is the new theme set');
 		done();
 	});
 
@@ -31,10 +35,8 @@ QUnit.test('set invalid theme does nothing', function(assert) {
 
 	var theme = 'not-a-theme';
 
-	assert.strictEqual(pl.SettingsStore.getTheme(), pl.Themes.getDefaultTheme());
-
 	pl.SettingsStore.addChangeListener(function() {
-		assert.strictEqual(pl.SettingsStore.getTheme(), pl.Themes.getDefaultTheme());
+		assert.strictEqual(pl.SettingsStore.getTheme(), pl.Themes.getDefaultTheme(), 'theme is the default theme');
 		done();
 	});
 
