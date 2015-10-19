@@ -65,6 +65,8 @@
 				}
 			});
 
+			notify.init();
+
 			return notify;
 		}
 	});

@@ -30,16 +30,23 @@
 		LOAD: "HistoryStore-LOAD"
 	};
 
-	var queries = [];
-	var queryIdSeq = 0;
+	var queries;
+	var queryIdSeq;
 
-	var watcher = null;
-
+	var watcher;
 	var notify = pl.observable(HistoryStore);
 
-	var load = function() {
-
+	var init = function() {
+		queries = [];
+		queryIdSeq = 0;
+		if (watcher) {
+			watcher.die();
+		}
 		watcher = new Watcher(gui.App.dataPath, NAME, update);
+		notify.init();
+	}
+
+	var load = function() {
 		watcher.watch();
 	};
 
@@ -87,8 +94,12 @@
 
 	pl.HistoryStore = pl.extend(HistoryStore, {
 
+		_init: init,
+
 		getQueryHistory: function() {
 			return queries;
 		}
 	});
+
+	init();
 })(pl||{});
