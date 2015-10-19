@@ -17,22 +17,22 @@
 */
 
 (function(pl){
-    
+
     var TAG = "SettingsActions:::";
-    
+
     pl.SettingsActions = {
-      
+
         load: function() {
             pl.Dispatcher.dispatch({
-                actionType: pl.SettingsStore.LOAD 
+                actionType: pl.SettingsStore.LOAD
             });
         },
-      
+
         setTheme: function(theme) {
             pl.Dispatcher.dispatch({
                 actionType: pl.SettingsStore.SET_THEME,
-                theme: theme 
+                theme: theme
             });
-        },
+        }
     };
 })(pl||{});

@@ -28,10 +28,6 @@
 		file: 'config.json'
 	});
 
-	var loaded = false;
-
-	var config = {};
-
 	var SettingsStore = {
 
 		BROADCAST_LOADED: "SettingsStore-BCAST_LOADED",
@@ -40,7 +36,19 @@
 		SET_THEME: "SettingsStore-SET_THEME"
 	};
 
+	var loaded;
+	var config;
+
 	var notify = pl.observable(SettingsStore);
+
+	var init = function() {
+		loaded = false;
+		config = {
+			theme: null,
+			databases: []
+		};
+		notify.init();
+	};
 
 	var saveConfig = function() {
 
@@ -98,7 +106,7 @@
 		var i = pl.Themes.getThemes().indexOf(theme);
 
 		config.theme = i >= 0 ? theme : pl.Themes.getDefaultTheme();
-		
+
 		saveConfig();
 		notify();
 	};
@@ -106,7 +114,7 @@
 	var setDatabases = function() {
 
 		config.databases = pl.DbItemStore.getDatabases();
-		
+
 		saveConfig();
 		notify();
 	};
@@ -131,6 +139,8 @@
 
 	pl.SettingsStore = pl.extend(SettingsStore, {
 
+		_init: init,
+
 		getTheme: function() {
 			return config.theme || pl.Themes.getDefaultTheme();
 		},
@@ -139,4 +149,6 @@
 			return config.databases;
 		}
 	});
+
+	init();
 })(pl||{});

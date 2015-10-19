@@ -3,20 +3,26 @@
 
 <script type="text/javascript">
 
-	jQuery('head').append([
-		jQuery('<link>')
-			.attr('href', 'app://_/node_modules/qunitjs/qunit/qunit.css')
+	var link = function(href) {
+		return jQuery('<link>')
+			.attr('href', 'app://_/' + href)
 			.attr('type', 'text/css')
-			.attr('rel', 'stylesheet'),
+			.attr('rel', 'stylesheet');
+	}
+
+	var script = function(src) {
+		return jQuery('<script>')
+			.attr('type','text/javascript')
+			.attr('src', 'app://_/' + src);
+	}
+
+	jQuery('head').append([
+		link('node_modules/qunitjs/qunit/qunit.css')
 	]);
 
 	jQuery('body').append([
-		jQuery('<script>')
-			.attr('type','text/javascript')
-			.attr('src', 'app://_/node_modules/qunitjs/qunit/qunit.js'),
-
-		jQuery('<script>')
-			.attr('type','text/javascript')
-			.attr('src', 'app://_/tests/hello-qunit-test.js')
+		script('node_modules/qunitjs/qunit/qunit.js'),
+		script('tests/hello-qunit-test.js'),
+		script('tests/stores/SettingsStoreTest.js')
 	]);
 </script>
