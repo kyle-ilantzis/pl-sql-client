@@ -50,6 +50,22 @@ QUnit.test('anything queried is remembered by HistoryStore', function(assert) {
 	pl.DbQueryActions.query(sql);
 });
 
+QUnit.test('empty queries is not remembered by HistoryStore', function(assert) {
+
+	var done = assert.async();
+
+	var sql = '';
+
+	pl.HistoryStore.addChangeListener(function() {
+		assert.notOk('no queries should have been remembered');
+		done();
+	});
+
+	setTimeout(done, 1000);
+
+	pl.DbQueryActions.query(sql);
+});
+
 QUnit.test('last query is the first in the history, ie the history is in reverse order', function(assert) {
 
 	var done = assert.async();
@@ -108,4 +124,80 @@ QUnit.test('history items have unique ids', function(assert) {
 	pl.DbQueryActions.query(sql2);
 	pl.DbQueryActions.query(sql3);
 	pl.DbQueryActions.query(sql4);
+});
+
+QUnit.test('A limit of 0 cause nothing to be remembered by HistoryStore', function(assert) {
+
+	var done = assert.async();
+
+	pl.HistoryStore.HISTORY_LIMIT = 0;
+	var sql = 'Peter Piper picked a peck of pickled peppers';
+
+	pl.HistoryStore.addChangeListener(function() {
+
+		var queries = pl.HistoryStore.getQueryHistory();
+
+		assert.strictEqual(queries.length, 0, 'no queries should have been remembered');
+
+		done();
+	});
+
+	pl.DbQueryActions.query(sql);
+});
+
+QUnit.test('A limit of 1 causes last query to be remembered by HistoryStore', function(assert) {
+
+	var done = assert.async();
+
+	pl.HistoryStore.HISTORY_LIMIT = 1;
+	var sql = 'I LOVE SQL';
+	var nosql = 'I HATE SQL, LONG LIVE NOSQL';
+
+	var sqlCount = 2;
+
+	var i = 0;
+	pl.HistoryStore.addChangeListener(function() {
+
+		if (++i != sqlCount) { return; }
+
+		var queries = pl.HistoryStore.getQueryHistory();
+
+		assert.deepEqual(queries.length, 1, 'only the last query should have been remembered');
+		assert.deepEqual(queries[0].sql, nosql, 'the last query should have been remembered');
+
+		done();
+	});
+
+	pl.DbQueryActions.query(sql);
+	pl.DbQueryActions.query(nosql);
+});
+
+QUnit.test('Last HISTORY_LIMIT queries are remembered by HistoryStore', function(assert) {
+
+	var done = assert.async();
+
+	pl.HistoryStore.HISTORY_LIMIT = 10;
+
+	var sqls = _.range(1,20).map(function(i) { return "SQL " + i; });
+
+	var sqlCount = sqls.length;
+
+	var i = 0;
+	pl.HistoryStore.addChangeListener(function() {
+
+		if (++i != sqlCount) { return; }
+
+		var queries = pl.HistoryStore.getQueryHistory();
+		var querieSqls = _.pluck(queries, 'sql');
+
+		var lastSqls = _.last(sqls, pl.HistoryStore.HISTORY_LIMIT).reverse();
+
+		assert.deepEqual(querieSqls, lastSqls, 'the last queries should have been remembered');
+
+		done();
+	});
+
+	sqls.forEach(function(sql) {
+		pl.DbQueryActions.query(sql);
+	});
 });

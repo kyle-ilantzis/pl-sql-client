@@ -23,10 +23,11 @@
 	var TAG = "HistoryStore:::";
 	var NAME = "HistoryStore";
 
-	// The maximum number of queries to remember
-	var HISTORY_LIMIT = 100;
-
 	var HistoryStore = {
+
+		// The maximum number of queries to remember
+		HISTORY_LIMIT: 100,
+
 		LOAD: "HistoryStore-LOAD"
 	};
 
@@ -58,12 +59,11 @@
 
 		queries.unshift({ id: nextId, sql: sql });
 
-		if (queries.length > HISTORY_LIMIT) {
+		if (queries.length > pl.HistoryStore.HISTORY_LIMIT) {
 			queries.pop();
 		}
 
 		watcher.save(queries);
-
 		notify();
 	};
 
