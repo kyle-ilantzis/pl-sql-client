@@ -64,9 +64,10 @@
 
 		queries = newQueries;
 
-		queries.forEach(function(query) {
-			queryIdSeq = Math.max(query.id + 1, queryIdSeq);
-		});
+		queryIdSeq = queries.reduce(
+			function(newQueryIdSeq, query) { return Math.max(query.id + 1, newQueryIdSeq); },
+			0
+		);
 
 		notify();
 	};
