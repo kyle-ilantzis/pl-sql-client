@@ -39,7 +39,7 @@
 
 	var load = function() {
 
-		watcher = new Watcher(gui.App.dataPath, NAME, update);
+		watcher = new Watcher(gui.App.dataPath, NAME + '.' + pl.VERSION, update);
 		watcher.watch();
 	};
 
@@ -49,14 +49,17 @@
 
 		var nextId = queryIdSeq++;
 
-		queries.unshift({ id: nextId, sql: sql });
+		var newQuery = { id: nextId, sql: sql };
 
-		if (queries.length > HISTORY_LIMIT) {
-			queries.pop();
-		}
+		var dropAmount = Math.max(0, (queries.length + 1) - HISTORY_LIMIT);
+		var dropIndex = queries.length - dropAmount;
+		var dropCmd = [dropIndex, dropAmount];
+
+		var insertCmd = [0, 0, newQuery];
+
+		queries = pl.update(queries, {$splice: [dropCmd, insertCmd]});
 
 		watcher.save(queries);
-
 		notify();
 	};
 
