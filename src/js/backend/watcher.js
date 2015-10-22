@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var Config = require('./config.js');
+var FileWatcher = require('./file-watcher.js');
 
 var TAG = "Watcher:::";
 
 var Watcher = function(dir, name, cb) {
 
-	this._configApi = new Config({
+	this._fileWatcherApi = new FileWatcher({
 		directory: dir,
 		file: name + '.json'
 	});
@@ -43,7 +43,7 @@ Watcher.prototype.watch = function() {
 
 	var that = this;
 
-	this._configApi
+	this._fileWatcherApi
 		.load()
 		.catch(function(err){
 
@@ -54,7 +54,7 @@ Watcher.prototype.watch = function() {
 			that._update(null, readConfig);
 		});
 
-	this._configApi.watch(function(err, readValue) {
+	this._fileWatcherApi.watch(function(err, readValue) {
 		that._update(err, readValue);
 	});
 }
@@ -63,7 +63,7 @@ Watcher.prototype.save = function(newValue) {
 
 	var that = this;
 
-	this._configApi
+	this._fileWatcherApi
 		.save(newValue)
 		.catch(function(err){
 			console.log(TAG, 'Error while saving', that._name, ':', err);
