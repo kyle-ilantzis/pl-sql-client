@@ -13,16 +13,14 @@
 
 		nullToNoop: function(f) { return f ? f : function(){}; },
 
-		findIndex: function(arr,f) {
-
+		all: function(arr, p) {
 			var len = arr.length;
-			for(var i = 0; i < len; i++) {
-				if (f(arr[i])) {
-					return i;
+			for (var i = 0; i < len; i++) {
+				if(!p(arr[i])) {
+					return false;
 				}
 			}
-
-			return -1;
+			return true;
 		},
 
 		update: function(it,cmd) {
@@ -31,10 +29,6 @@
 
 		updateState: function(that,cmd) {
 			that.setState(React.addons.update(that.state,cmd));
-		},
-
-		include: function(that,props) {
-			props.forEach(function(prop) { that[prop] = pl[prop]; });
 		},
 
 		observable: function(it) {
