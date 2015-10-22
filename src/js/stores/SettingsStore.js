@@ -29,16 +29,16 @@
 
 		LOAD: "SettingsStore-LOAD",
 		SET_THEME: "SettingsStore-SET_THEME",
-		SET_SIZE: "SettingsStore-SET_SIZE"
+		SET_WINDOW_RECT: "SettingsStore-SET_WINDOW_RECT"
 	};
 
 	var config = {
 		theme: null,
-		databases: []
+		databases: [],
+		windowRect: null
 	};
 
 	var loaded = false;
-	var initial = true;
 
 	var watcher = null;
 
@@ -60,10 +60,9 @@
 		notify();
 	};
 
-	var setSize = function(width, height) {
+	var setWindowRect = function(x, y, width, height) {
 
-		config.width = width;
-		config.height = height;
+		config.windowRect = { x: x, y: y, width: width, height: height };
 
 		watcher.save(config);
 		notify();
@@ -79,12 +78,12 @@
 
 	var update = function(newConfig) {
 
-			initial = !loaded;
 			loaded = true;
 
 			config = pl.extend({
 					theme: null,
-					databases: []
+					databases: [],
+					windowRect: null
 				},
 				newConfig
 			);
@@ -109,8 +108,8 @@
 				setTheme(action.theme);
 				break;
 
-			case SettingsStore.SET_SIZE:
-				setSize(action.width, action.height);
+			case SettingsStore.SET_WINDOW_RECT:
+				setWindowRect(action.x, action.y, action.width, action.height);
 				break;
 		}
 	});
@@ -125,16 +124,8 @@
 			return config.databases;
 		},
 
-		getWidth: function(){
-			return config.width;
-		},
-
-		getHeight: function(){
-			return config.height;
-		},
-
-		isInitial: function(){
-			return initial;
+		getWindowRect: function() {
+			return config.windowRect;
 		}
 	});
 })(pl||{});

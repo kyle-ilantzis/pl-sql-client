@@ -35,9 +35,11 @@
             });
         },
 
-        setSize: function(width, height) {
+        setWindowRect: function(x, y, width, height) {
           pl.Dispatcher.dispatch({
-              actionType: pl.SettingsStore.SET_SIZE,
+              actionType: pl.SettingsStore.SET_WINDOW_RECT,
+              x: x,
+              y: y,
               width: width,
               height: height
           });
