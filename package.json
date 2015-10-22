@@ -12,6 +12,7 @@
     "node-watch": "^0.3.4"
   },
   "main": "index.html",
+  "single-instance": false, 
   "scripts": {
     "start": "gulp"
   },

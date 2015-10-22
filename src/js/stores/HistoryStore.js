@@ -17,97 +17,80 @@
 */
 
 (function(pl) {
-	
+	var gui = require('nw.gui');
+	var Watcher = require('./backend/watcher.js');
+
 	var TAG = "HistoryStore:::";
 	var NAME = "HistoryStore";
-	
-	// The database version, useful during database updgrades
-	var VERSION = 1;
 
 	// The maximum number of queries to remember
 	var HISTORY_LIMIT = 100;
-	
-	var HistoryStore = {		
+
+	var HistoryStore = {
 		LOAD: "HistoryStore-LOAD"
 	};
-	
-	var db = new Dexie(NAME);
+
 	var queries = [];
-	
+	var queryIdSeq = 0;
+
+	var watcher = null;
+
 	var notify = pl.observable(HistoryStore);
-	
+
 	var load = function() {
-		
-		db
-			.version(VERSION)
-			.stores({
-				/**
-				 * The history table stores user's past queries.
-				 * This table will be accessible via `db.history`.
-				 *
-				 * ++id:	An auto-incremented primary key used only for sorting.
-				 * 			The bigger the id the newer the query.
-				 *
-				 * sql: 	The query the user entered.
-				 */
-				history: "++id,sql"	
-			});
-			
-		db.open()
-			.catch(function(error) {
-				console.log(TAG, "load error", error);
-			});
-				
-		db.history
-			.reverse()
-			.toArray(function(allQueries) {
-				queries = allQueries;
-				notify();
-			});
+
+		watcher = new Watcher(gui.App.dataPath, NAME + '.' + pl.VERSION, update);
+		watcher.watch();
 	};
-	
+
 	var remember = function(sql) {
-		
+
 		if (!sql.trim()) { return; }
-		
-		db.transaction("rw", db.history, function() {
-			db.history.count(function(count) {
-				
-				if ( count >= HISTORY_LIMIT ) {
-					db.history.limit(count - HISTORY_LIMIT + 1).delete();
-				}
-				
-				db.history.add({ sql: sql });	
-						
-				db.history
-					.reverse()
-					.toArray(function(allQueries) {
-						queries = allQueries;
-						notify();
-					});
-			});
-		})
-		.catch(function(error) {
-			console.log(TAG, "remember error", error);	
-		});
+
+		var nextId = queryIdSeq++;
+
+		var newQuery = { id: nextId, sql: sql };
+
+		var dropAmount = Math.max(0, (queries.length + 1) - HISTORY_LIMIT);
+		var dropIndex = queries.length - dropAmount;
+		var dropCmd = [dropIndex, dropAmount];
+
+		var insertCmd = [0, 0, newQuery];
+
+		queries = pl.update(queries, {$splice: [dropCmd, insertCmd]});
+
+		watcher.save(queries);
+		notify();
 	};
-	
+
+	var update = function(newQueries) {
+
+		queries = newQueries;
+
+		queryIdSeq = queries.reduce(
+			function(newQueryIdSeq, query) { return Math.max(query.id + 1, newQueryIdSeq); },
+			0
+		);
+
+		notify();
+	};
+
 	pl.Dispatcher.register(NAME, function(action) {
-		
+
 		switch(action.actionType) {
-			
+
 			case HistoryStore.LOAD:
 				load();
 				break;
-				
+
 			case pl.DbQueryStore.QUERY:
 				remember(action.sql);
 				break;
 		}
 	});
-	
-	pl.HistoryStore = pl.extend(HistoryStore, {			
-		
+
+	pl.HistoryStore = pl.extend(HistoryStore, {
+
 		getQueryHistory: function() {
 			return queries;
 		}

@@ -17,20 +17,11 @@
 */
 
 (function(pl) {
-	var Config = require('./backend/config.js');
 	var gui = require('nw.gui');
+	var Watcher = require('./backend/watcher.js');
 
 	var TAG = "SettingsStore:::";
 	var NAME = "SettingsStore";
-
-	var configApi = new Config({
-		directory: gui.App.dataPath,
-		file: 'config.json'
-	});
-
-	var loaded = false;
-
-	var config = {};
 
 	var SettingsStore = {
 
@@ -40,57 +31,19 @@
 		SET_THEME: "SettingsStore-SET_THEME"
 	};
 
-	var notify = pl.observable(SettingsStore);
-
-	var saveConfig = function() {
-
-		configApi.save(config).catch(function(err){
-			console.log(TAG, 'Error while saving configuration:', err);
-		});
+	var config = {
+		theme: null,
+		databases: []
 	};
+
+	var watcher = null;
+
+	var notify = pl.observable(SettingsStore);
 
 	var load = function() {
 
-		configApi
-			.load()
-			.catch(function(err){
-				settingsLoaded(err, null);
-				loaded = true;
-
-			}).then( function(readConfig) {
-				settingsLoaded(null, readConfig);
-				loaded = true;
-
-			});
-
-		configApi.watch(settingsLoaded);
-	};
-
-	var settingsLoaded = function(err, readConfig) {
-
-			if (err && loaded) {
-				console.log(TAG, 'Error while loading configuration.', err);
-				return;
-			}
-
-			if (readConfig) {
-
-				console.log(TAG, 'New configuration loaded.');
-
-				config = pl.extend({
-						theme: null,
-						databases: []
-					},
-					readConfig
-				);
-			}
-			else {
-				console.log(TAG, 'Error while loading configuration. Initializing to empty.', err);
-				readConfig = {};
-			}
-
-			pl.BroadcastActions.settingsLoaded();
-			notify();
+		watcher = new Watcher(gui.App.dataPath, NAME, update);
+		watcher.watch(update);
 	};
 
 	var setTheme = function(theme) {
@@ -98,17 +51,30 @@
 		var i = pl.Themes.getThemes().indexOf(theme);
 
 		config.theme = i >= 0 ? theme : pl.Themes.getDefaultTheme();
-		
-		saveConfig();
+
+		watcher.save(config);
 		notify();
 	};
 
 	var setDatabases = function() {
 
 		config.databases = pl.DbItemStore.getDatabases();
-		
-		saveConfig();
+
+		watcher.save(config);
 		notify();
+	};
+
+	var update = function(newConfig) {
+
+			config = pl.extend({
+					theme: null,
+					databases: []
+				},
+				newConfig
+			);
+
+			pl.BroadcastActions.settingsLoaded();
+			notify();
 	};
 
 	pl.Dispatcher.register(NAME, function(action) {
