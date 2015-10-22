@@ -25,12 +25,16 @@
 	};
 
 	var onSettingsChange = function() {
-    if (pl.SettingsStore.isInitial()) {
-      resize(pl.SettingsStore.getWidth(), pl.SettingsStore.getHeight());
-    }
+		if (pl.SettingsStore.isInitial()){
+			resize(pl.SettingsStore.getWidth(), pl.SettingsStore.getHeight());
+		}
 	};
 
 	var resize = function(width, height) {
+		if (width === win.width && height === win.height){
+			return;
+		}
+
     if (width !== null) {
       win.width = width;
     }
