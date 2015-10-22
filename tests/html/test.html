@@ -1,0 +1,22 @@
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+<script type="text/javascript">
+
+	jQuery('head').append([
+		jQuery('<link>')
+			.attr('href', 'app://_/node_modules/qunitjs/qunit/qunit.css')
+			.attr('type', 'text/css')
+			.attr('rel', 'stylesheet'),
+	]);
+
+	jQuery('body').append([
+		jQuery('<script>')
+			.attr('type','text/javascript')
+			.attr('src', 'app://_/node_modules/qunitjs/qunit/qunit.js'),
+
+		jQuery('<script>')
+			.attr('type','text/javascript')
+			.attr('src', 'app://_/tests/hello-qunit-test.js')
+	]);
+</script>
