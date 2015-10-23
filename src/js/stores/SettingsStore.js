@@ -28,7 +28,8 @@
 		BROADCAST_LOADED: "SettingsStore-BCAST_LOADED",
 
 		LOAD: "SettingsStore-LOAD",
-		SET_THEME: "SettingsStore-SET_THEME"
+		SET_THEME: "SettingsStore-SET_THEME",
+		SET_WINDOW_RECT: "SettingsStore-SET_WINDOW_RECT"
 	};
 
 	var DEFAULT_CONFIG = {

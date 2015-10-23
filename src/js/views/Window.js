@@ -33,7 +33,7 @@
 
 	var registerWindowListeners = function() {
 
-		// set the window dimensions for the first only time.
+		// set the window dimensions for the first and only time.
 		// After this we should not need to set them again.
 		var windowRect = pl.SettingsStore.getWindowRect();
 		if (windowRect != null ) {
@@ -42,6 +42,11 @@
 			win.height = windowRect.height;
 			win.width = windowRect.width;
 		}
+
+		// Now that the window dimensions are set for the first time we can show it.
+		// This avoids the window flickering on startup, and to be safe we
+		// will delay the show just a bit more.
+		setTimeout(function() { win.show(); }, 500);
 
 		win.on('move', postSetWindowRect);
 		win.on('resize', postSetWindowRect);

@@ -42,6 +42,7 @@
     "title": "Pretty Legendary SQL Client",
     "toolbar": true,
     "frame": true,
+    "show": false,
     "width": 800,
     "height": 400,
     "position": "mouse",
