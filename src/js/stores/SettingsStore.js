@@ -28,25 +28,28 @@
 		BROADCAST_LOADED: "SettingsStore-BCAST_LOADED",
 
 		LOAD: "SettingsStore-LOAD",
-		SET_THEME: "SettingsStore-SET_THEME",
-		SET_WINDOW_RECT: "SettingsStore-SET_WINDOW_RECT"
+		SET_THEME: "SettingsStore-SET_THEME"
 	};
 
-	var config = {
-		theme: null,
-		databases: [],
-		windowRect: null
-	};
+	var config;
 
-	var loaded = false;
-
-	var watcher = null;
-
+	var watcher;
 	var notify = pl.observable(SettingsStore);
 
-	var load = function() {
-
+	var init = function() {
+		loaded = false;
+		config = {
+			theme: null,
+			databases: []
+		};
+		if (watcher) {
+			watcher.die();
+		}
 		watcher = new Watcher(gui.App.dataPath, NAME, update);
+		notify.init();
+	};
+
+	var load = function() {
 		watcher.watch(update);
 	};
 
@@ -77,8 +80,6 @@
 	};
 
 	var update = function(newConfig) {
-
-			loaded = true;
 
 			config = pl.extend({
 					theme: null,
@@ -116,6 +117,8 @@
 
 	pl.SettingsStore = pl.extend(SettingsStore, {
 
+		_init: init,
+
 		getTheme: function() {
 			return config.theme || pl.Themes.getDefaultTheme();
 		},
@@ -128,4 +131,6 @@
 			return config.windowRect;
 		}
 	});
+
+	init();
 })(pl||{});

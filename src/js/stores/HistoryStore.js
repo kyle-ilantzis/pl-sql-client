@@ -23,23 +23,31 @@
 	var TAG = "HistoryStore:::";
 	var NAME = "HistoryStore";
 
-	// The maximum number of queries to remember
-	var HISTORY_LIMIT = 100;
-
 	var HistoryStore = {
+
+		// The maximum number of queries to remember
+		HISTORY_LIMIT: 100,
+
 		LOAD: "HistoryStore-LOAD"
 	};
 
-	var queries = [];
-	var queryIdSeq = 0;
+	var queries;
+	var queryIdSeq;
 
-	var watcher = null;
-
+	var watcher;
 	var notify = pl.observable(HistoryStore);
 
-	var load = function() {
-
+	var init = function() {
+		queries = [];
+		queryIdSeq = 0;
+		if (watcher) {
+			watcher.die();
+		}
 		watcher = new Watcher(gui.App.dataPath, NAME, update);
+		notify.init();
+	}
+
+	var load = function() {
 		watcher.watch();
 	};
 
@@ -51,12 +59,11 @@
 
 		queries.unshift({ id: nextId, sql: sql });
 
-		if (queries.length > HISTORY_LIMIT) {
+		if (queries.length > pl.HistoryStore.HISTORY_LIMIT) {
 			queries.pop();
 		}
 
 		watcher.save(queries);
-
 		notify();
 	};
 
@@ -87,8 +94,12 @@
 
 	pl.HistoryStore = pl.extend(HistoryStore, {
 
+		_init: init,
+
 		getQueryHistory: function() {
 			return queries;
 		}
 	});
+
+	init();
 })(pl||{});
