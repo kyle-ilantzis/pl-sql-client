@@ -1,6 +1,9 @@
 (function(window) {
-	
+
 	var pl = {
+
+		VERSION: 0,
+
 		extend: function extend(a, b){
 			for(var key in b)
 				if(b.hasOwnProperty(key))
@@ -8,35 +11,35 @@
 			return a;
 		}
 	};
-	
+
 	window.pl = pl.extend(pl, {
-		
+
 		nullToNoop: function(f) { return f ? f : function(){}; },
-		
+
 		findIndex: function(arr,f) {
-			
+
 			var len = arr.length;
 			for(var i = 0; i < len; i++) {
 				if (f(arr[i])) {
 					return i;
 				}
 			}
-			
+
 			return -1;
 		},
-		
+
 		update: function(it,cmd) {
 			return React.addons.update(it,cmd);
 		},
-		
+
 		updateState: function(that,cmd) {
 			that.setState(React.addons.update(that.state,cmd));
 		},
-		
+
 		include: function(that,props) {
 			props.forEach(function(prop) { that[prop] = pl[prop]; });
 		},
-		
+
 		observable: function(it) {
 
 			var callbacks;

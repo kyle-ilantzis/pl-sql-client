@@ -19,6 +19,7 @@ var NwBuilder = require('nw-builder');
 var NwVersions = require('nw-builder/lib/versions');
 
 var devMode = environments.development;
+var testMode = environments.make("testing");
 var prodMode = environments.production;
 
 var cfg = readAllJSON('gulpconfig.json');
@@ -40,7 +41,7 @@ function readAllJSON(file) {
 }
 
 function output_dir(){
-  if (devMode()){
+  if (devMode() || testMode()){
     return path.join(base_output_dir, 'debug');
   }
 
@@ -74,20 +75,24 @@ function findNwVersion(version) {
 }
 
 gulp.task('copy-index', function(){
-  if (devMode()){
-    gutil.log('In development mode, including watch statement.');
-    var watchStatement = readAll('src/html/watch.html');
 
-    return gulp.src('src/html/index.html')
-      .pipe(substituter({
-          watch: watchStatement
-      }))
-      .pipe(gulp.dest(output_dir()));
+  if (devMode()) {
+    gutil.log('In development mode, including watch statement.');
   } else {
     gutil.log('Not in development mode, skipping watch statement.');
-    return gulp.src('src/html/index.html')
-      .pipe(gulp.dest(output_dir()));
   }
+
+  var mainHtml = devMode() || prodMode() ? readAll('src/html/main.html') : '';
+  var testHtml = testMode() ? readAll('tests/html/test.html') : '';
+  var watchHtml = devMode() ? readAll('src/html/watch.html') : '';
+
+  return gulp.src('src/html/index.html')
+          .pipe(substituter({
+            main: mainHtml,
+            test: testHtml,
+            watch: watchHtml
+          }))
+          .pipe(gulp.dest(output_dir()));
 });
 
 function transformAppInfo(appInfo){
@@ -132,6 +137,14 @@ gulp.task('copy-deps', function() {
     .pipe(gulp.dest(output_dir() + '/node_modules'));
 });
 
+gulp.task('copy-test-deps', function() {
+
+  var dest = path.join(output_dir(), 'node_modules', 'qunitjs');
+
+  return gulp.src('node_modules/qunitjs/**')
+    .pipe(gulp.dest(dest));
+});
+
 gulp.task('themes', function() {
   return gulp.src('./src/less/theme-*.less')
         .pipe(less({
@@ -147,9 +160,21 @@ gulp.task('jsx', function(){
         .pipe(gulp.dest(output_dir()));
 });
 
+gulp.task('copy-tests', function() {
+
+  var dest = path.join(output_dir(), 'tests');
+
+  return gulp.src('./tests/js/**')
+          .pipe(gulp.dest(dest));
+});
+
 gulp.task('watch', function(){
   gulp.watch('./src/js/**', ['jsx']);
   gulp.watch('./src/less/**', ['theme']);
+});
+
+gulp.task('set-test-mode', function() {
+  environments.current(testMode);
 });
 
 gulp.task('set-prod-mode', function(){
@@ -161,6 +186,10 @@ gulp.task('clean', function() {
 });
 
 gulp.task('compile', ['copy-index', 'copy-appInfo', 'copy-vendor', 'themes', 'jsx']);
+
+gulp.task('compile-tests', function(cb) {
+  runSequence('set-test-mode', ['compile', 'copy-tests', 'copy-test-deps'], cb);
+});
 
 gulp.task('package', function(cb){
   findNwVersion(appInfo.devDependencies.nw).then(function(foundVersion){
@@ -191,6 +220,10 @@ gulp.task('start', ['compile', 'watch'], function(done){
     'serve',
     done
   );
+});
+
+gulp.task('test', function(done){
+  runSequence('compile-tests', 'serve', done);
 });
 
 gulp.task('serve', shell.task([
