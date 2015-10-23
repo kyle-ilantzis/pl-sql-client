@@ -38,21 +38,25 @@
 		},
 		
 		observable: function(it) {
-			
-			var callbacks = [];
-			
+
+			var callbacks;
+
 			var notify = function() {
 				callbacks.forEach(function(cb) {
 					cb();
 				});
 			}
-			
+
+			notify.init = function() {
+				callbacks = [];
+			};
+
 			pl.extend(it, {
-				
+
 				addChangeListener: function(callback) {
 					callbacks.push(callback);
 				},
-				
+
 				removeChangeListener: function(callback) {
 					var i = callbacks.indexOf(callback);
 					if (i !== -1) {
@@ -60,7 +64,9 @@
 					}
 				}
 			});
-			
+
+			notify.init();
+
 			return notify;
 		}
 	});

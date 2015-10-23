@@ -31,6 +31,12 @@
 		SET_THEME: "SettingsStore-SET_THEME"
 	};
 
+	var DEFAULT_CONFIG = {
+		theme: null,
+		databases: [],
+		windowRect: null
+	};
+
 	var config;
 
 	var watcher;
@@ -38,14 +44,11 @@
 
 	var init = function() {
 		loaded = false;
-		config = {
-			theme: null,
-			databases: []
-		};
+		config = DEFAULT_CONFIG;
 		if (watcher) {
 			watcher.die();
 		}
-		watcher = new Watcher(gui.App.dataPath, NAME, update);
+		watcher = new Watcher(gui.App.dataPath, NAME, DEFAULT_CONFIG, update);
 		notify.init();
 	};
 
@@ -81,13 +84,7 @@
 
 	var update = function(newConfig) {
 
-			config = pl.extend({
-					theme: null,
-					databases: [],
-					windowRect: null
-				},
-				newConfig
-			);
+			config = pl.extend(DEFAULT_CONFIG, newConfig);
 
 			pl.BroadcastActions.settingsLoaded();
 			notify();

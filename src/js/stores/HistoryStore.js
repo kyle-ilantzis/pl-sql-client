@@ -43,7 +43,7 @@
 		if (watcher) {
 			watcher.die();
 		}
-		watcher = new Watcher(gui.App.dataPath, NAME, update);
+		watcher = new Watcher(gui.App.dataPath, NAME, [], update);
 		notify.init();
 	}
 

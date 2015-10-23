@@ -20,7 +20,7 @@ var Config = require('./config.js');
 
 var TAG = "Watcher:::";
 
-var Watcher = function(dir, name, cb) {
+var Watcher = function(dir, name, defaultValue, cb) {
 
 	this._configApi = new Config({
 		directory: dir,
@@ -28,7 +28,11 @@ var Watcher = function(dir, name, cb) {
 	});
 
 	this._name = name;
+	this._defaultValue = defaultValue;
+
 	this._cb = cb;
+
+	this._loaded = false;
 }
 
 Watcher.prototype.name = function() {
@@ -48,10 +52,12 @@ Watcher.prototype.watch = function() {
 		.catch(function(err){
 
 			that._update(err, null);
+			that._loaded = true;
 		})
 		.then(function(readConfig) {
 
 			that._update(null, readConfig);
+			that._loaded = true;
 		});
 
 	this._configApi.watch(function(err, readValue) {
@@ -76,10 +82,14 @@ Watcher.prototype._update = function(err, readValue) {
 
 		console.log(TAG, 'New', this._name, 'loaded.');
 		this._cb(readValue);
+	} else if (!this._loaded) {
+
+		console.log(TAG, 'Error while loading', this._name, '. Initializing to default value.', err);
+		this._cb(this._defaultValue);
 	} else {
 
 		console.log(TAG, 'Error while loading', this._name, '.', err);
 	}
-};
+}
 
 module.exports = Watcher;
