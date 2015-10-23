@@ -19,17 +19,17 @@
 (function(pl) {
 
 	pl.BroadcastActions = {
-		
+
 		settingsLoaded: function() {
 			pl.Dispatcher.dispatch({
 				actionType: pl.SettingsStore.BROADCAST_LOADED
 			});
 		},
-		
+
 		databasesChanged: function() {
 			pl.Dispatcher.dispatch({
 				actionType: pl.DbItemStore.BROADCAST_CHANGED
 			});
 		},
-	}	
+	};
 })(pl||{});

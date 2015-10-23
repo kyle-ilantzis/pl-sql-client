@@ -42,13 +42,17 @@
 
 		observable: function(it) {
 
-			var callbacks = [];
+			var callbacks;
 
 			var notify = function() {
 				callbacks.forEach(function(cb) {
 					cb();
 				});
 			}
+
+			notify.init = function() {
+				callbacks = [];
+			};
 
 			pl.extend(it, {
 
@@ -63,6 +67,8 @@
 					}
 				}
 			});
+
+			notify.init();
 
 			return notify;
 		}
