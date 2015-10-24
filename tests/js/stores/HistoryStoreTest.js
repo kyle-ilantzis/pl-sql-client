@@ -14,10 +14,9 @@ QUnit.module('HistoryStoreTest', {
 
 QUnit.test('querying is remembered by HistoryStore', function(assert) {
 
-	var done = assert.async();
-
 	var sql = 'SELECT * FROM passwd';
 
+	var done = assert.async();
 	pl.HistoryStore.addChangeListener(function() {
 
 		var queries = pl.HistoryStore.getQueryHistory();
@@ -33,10 +32,9 @@ QUnit.test('querying is remembered by HistoryStore', function(assert) {
 
 QUnit.test('anything queried is remembered by HistoryStore', function(assert) {
 
-	var done = assert.async();
-
 	var sql = 'what is the meaning of life?';
 
+	var done = assert.async();
 	pl.HistoryStore.addChangeListener(function() {
 
 		var queries = pl.HistoryStore.getQueryHistory();
@@ -52,10 +50,9 @@ QUnit.test('anything queried is remembered by HistoryStore', function(assert) {
 
 QUnit.test('empty queries is not remembered by HistoryStore', function(assert) {
 
-	var done = assert.async();
-
 	var sql = '';
 
+	var done = assert.async();
 	pl.HistoryStore.addChangeListener(function() {
 		assert.notOk('no queries should have been remembered');
 		done();
@@ -68,16 +65,14 @@ QUnit.test('empty queries is not remembered by HistoryStore', function(assert) {
 
 QUnit.test('last query is the first in the history, ie the history is in reverse order', function(assert) {
 
-	var done = assert.async();
-
 	var sql1 = 'rm -r /';
 	var sql2 = 'sudo make me a sandwhich';
 	var sql3 = 'SELECT chunk FROM chunkyBacon where size > 5';
 
-	var i = 0;
-	pl.HistoryStore.addChangeListener(function() {
+	var sqlCount = 3;
 
-		if (++i !== 3) { return; }
+	var done = assert.async();
+	pl.HistoryStore.addChangeListener(plt.once(sqlCount, function() {
 
 		var queries = pl.HistoryStore.getQueryHistory();
 
@@ -87,7 +82,7 @@ QUnit.test('last query is the first in the history, ie the history is in reverse
 		assert.strictEqual( queries[2].sql, sql1, 'last item sql must be the first query');
 
 		done();
-	});
+	}));
 
 	pl.DbQueryActions.query(sql1);
 	pl.DbQueryActions.query(sql2);
@@ -96,8 +91,6 @@ QUnit.test('last query is the first in the history, ie the history is in reverse
 
 QUnit.test('history items have unique ids', function(assert) {
 
-	var done = assert.async();
-
 	var sql1 = 'I am sql1';
 	var sql2 = 'I am sql2';
 	var sql3 = 'I am sql3';
@@ -105,10 +98,8 @@ QUnit.test('history items have unique ids', function(assert) {
 
 	var sqlCount = 4;
 
-	var i = 0;
-	pl.HistoryStore.addChangeListener(function() {
-
-		if (++i !== sqlCount) { return; }
+	var done = assert.async();
+	pl.HistoryStore.addChangeListener(plt.once(sqlCount, function() {
 
 		var queries = pl.HistoryStore.getQueryHistory();
 
@@ -118,7 +109,7 @@ QUnit.test('history items have unique ids', function(assert) {
 		assert.strictEqual( uniqueIds.length, sqlCount, 'ids must be unique for each query');
 
 		done();
-	});
+	}));
 
 	pl.DbQueryActions.query(sql1);
 	pl.DbQueryActions.query(sql2);
@@ -128,11 +119,10 @@ QUnit.test('history items have unique ids', function(assert) {
 
 QUnit.test('A limit of 0 cause nothing to be remembered by HistoryStore', function(assert) {
 
-	var done = assert.async();
-
 	pl.HistoryStore.HISTORY_LIMIT = 0;
 	var sql = 'Peter Piper picked a peck of pickled peppers';
 
+	var done = assert.async();
 	pl.HistoryStore.addChangeListener(function() {
 
 		var queries = pl.HistoryStore.getQueryHistory();
@@ -147,18 +137,14 @@ QUnit.test('A limit of 0 cause nothing to be remembered by HistoryStore', functi
 
 QUnit.test('A limit of 1 causes last query to be remembered by HistoryStore', function(assert) {
 
-	var done = assert.async();
-
 	pl.HistoryStore.HISTORY_LIMIT = 1;
 	var sql = 'I LOVE SQL';
 	var nosql = 'I HATE SQL, LONG LIVE NOSQL';
 
 	var sqlCount = 2;
 
-	var i = 0;
-	pl.HistoryStore.addChangeListener(function() {
-
-		if (++i != sqlCount) { return; }
+	var done = assert.async();
+	pl.HistoryStore.addChangeListener(plt.once(sqlCount, function() {
 
 		var queries = pl.HistoryStore.getQueryHistory();
 
@@ -166,7 +152,7 @@ QUnit.test('A limit of 1 causes last query to be remembered by HistoryStore', fu
 		assert.deepEqual(queries[0].sql, nosql, 'the last query should have been remembered');
 
 		done();
-	});
+	}));
 
 	pl.DbQueryActions.query(sql);
 	pl.DbQueryActions.query(nosql);
@@ -174,18 +160,14 @@ QUnit.test('A limit of 1 causes last query to be remembered by HistoryStore', fu
 
 QUnit.test('Last HISTORY_LIMIT queries are remembered by HistoryStore', function(assert) {
 
-	var done = assert.async();
-
 	pl.HistoryStore.HISTORY_LIMIT = 10;
 
 	var sqls = _.range(1,20).map(function(i) { return "SQL " + i; });
 
 	var sqlCount = sqls.length;
 
-	var i = 0;
-	pl.HistoryStore.addChangeListener(function() {
-
-		if (++i != sqlCount) { return; }
+	var done = assert.async();
+	pl.HistoryStore.addChangeListener(plt.once(sqlCount, function() {
 
 		var queries = pl.HistoryStore.getQueryHistory();
 		var querieSqls = _.pluck(queries, 'sql');
@@ -195,7 +177,7 @@ QUnit.test('Last HISTORY_LIMIT queries are remembered by HistoryStore', function
 		assert.deepEqual(querieSqls, lastSqls, 'the last queries should have been remembered');
 
 		done();
-	});
+	}));
 
 	sqls.forEach(function(sql) {
 		pl.DbQueryActions.query(sql);
