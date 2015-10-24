@@ -6,6 +6,7 @@
 	var $themes;
 	var defaultTheme;
 	var themes;
+	var lastTheme;
 
 	var init = function() {
 
@@ -13,6 +14,7 @@
 		$themes = jQuery();
 		defaultTheme = null;
 		themes = [];
+		lastTheme = null;
 	};
 
 	var load = function() {

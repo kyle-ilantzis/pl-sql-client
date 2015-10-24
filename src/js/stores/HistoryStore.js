@@ -59,7 +59,7 @@
 
 		var newQuery = { id: nextId, sql: sql };
 
-		var dropAmount = Math.max(0, (queries.length + 1) - HISTORY_LIMIT);
+		var dropAmount = Math.max(0, (queries.length + 1) - pl.HistoryStore.HISTORY_LIMIT);
 		var dropIndex = queries.length - dropAmount;
 		var dropCmd = [dropIndex, dropAmount];
 
