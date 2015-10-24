@@ -44,7 +44,7 @@
 
         var final = function(result,error) {
 
-            var nextId = String(multiQueryIdSeq++)
+            var nextId = String(multiQueryIdSeq++);
 
             result.forEach(function(queryResult, i) {
                 queryResult.id = nextId + "_" + i;

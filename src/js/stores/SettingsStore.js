@@ -28,10 +28,16 @@
 		BROADCAST_LOADED: "SettingsStore-BCAST_LOADED",
 
 		LOAD: "SettingsStore-LOAD",
-		SET_THEME: "SettingsStore-SET_THEME"
+		SET_THEME: "SettingsStore-SET_THEME",
+		SET_WINDOW_RECT: "SettingsStore-SET_WINDOW_RECT"
 	};
 
-	var loaded;
+	var DEFAULT_CONFIG = {
+		theme: null,
+		databases: [],
+		windowRect: null
+	};
+
 	var config;
 
 	var watcher;
@@ -39,14 +45,11 @@
 
 	var init = function() {
 		loaded = false;
-		config = {
-			theme: null,
-			databases: []
-		};
+		config = DEFAULT_CONFIG;
 		if (watcher) {
 			watcher.die();
 		}
-		watcher = new Watcher(gui.App.dataPath, NAME, update);
+		watcher = new Watcher(gui.App.dataPath, NAME, DEFAULT_CONFIG, update);
 		notify.init();
 	};
 
@@ -64,6 +67,14 @@
 		notify();
 	};
 
+	var setWindowRect = function(x, y, width, height) {
+
+		config.windowRect = { x: x, y: y, width: width, height: height };
+
+		watcher.save(config);
+		notify();
+	};
+
 	var setDatabases = function() {
 
 		config.databases = pl.DbItemStore.getDatabases();
@@ -74,12 +85,7 @@
 
 	var update = function(newConfig) {
 
-			config = pl.extend({
-					theme: null,
-					databases: []
-				},
-				newConfig
-			);
+			config = pl.extend(DEFAULT_CONFIG, newConfig);
 
 			pl.BroadcastActions.settingsLoaded();
 			notify();
@@ -100,6 +106,10 @@
 			case SettingsStore.SET_THEME:
 				setTheme(action.theme);
 				break;
+
+			case SettingsStore.SET_WINDOW_RECT:
+				setWindowRect(action.x, action.y, action.width, action.height);
+				break;
 		}
 	});
 
@@ -113,6 +123,10 @@
 
 		getDatabases: function() {
 			return config.databases;
+		},
+
+		getWindowRect: function() {
+			return config.windowRect;
 		}
 	});
 

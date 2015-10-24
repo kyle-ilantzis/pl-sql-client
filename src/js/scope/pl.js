@@ -1,6 +1,9 @@
 (function(window) {
-
+	
 	var pl = {
+
+		VERSION: 0,
+
 		extend: function extend(a, b){
 			for(var key in b)
 				if(b.hasOwnProperty(key))
@@ -8,9 +11,9 @@
 			return a;
 		}
 	};
-
+	
 	window.pl = pl.extend(pl, {
-
+		
 		nullToNoop: function(f) { return f ? f : function(){}; },
 
 		all: function(arr, p) {
@@ -22,11 +25,11 @@
 			}
 			return true;
 		},
-
+		
 		update: function(it,cmd) {
 			return React.addons.update(it,cmd);
 		},
-
+		
 		updateState: function(that,cmd) {
 			that.setState(React.addons.update(that.state,cmd));
 		},
@@ -46,11 +49,11 @@
 			};
 
 			pl.extend(it, {
-
+				
 				addChangeListener: function(callback) {
 					callbacks.push(callback);
 				},
-
+				
 				removeChangeListener: function(callback) {
 					var i = callbacks.indexOf(callback);
 					if (i !== -1) {
