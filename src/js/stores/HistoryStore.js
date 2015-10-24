@@ -63,7 +63,7 @@
 		var dropIndex = queries.length - dropAmount;
 		var dropCmd = [dropIndex, dropAmount];
 
-		var insertCmd = [0, 0, newQuery];
+		var insertCmd = pl.HistoryStore.HISTORY_LIMIT > 0 ? [0, 0, newQuery] : [];
 
 		queries = pl.update(queries, {$splice: [dropCmd, insertCmd]});
 
