@@ -96,6 +96,9 @@ gulp.task('copy-index', function(){
 });
 
 function transformAppInfo(appInfo){
+
+  appInfo.window.show = testMode();
+
   if (prodMode()){
     gutil.log('In production mode, removing toolbar.');
     appInfo.window.toolbar = false;

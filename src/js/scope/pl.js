@@ -1,5 +1,5 @@
 (function(window) {
-
+	
 	var pl = {
 
 		VERSION: 0,
@@ -11,33 +11,27 @@
 			return a;
 		}
 	};
-
+	
 	window.pl = pl.extend(pl, {
-
+		
 		nullToNoop: function(f) { return f ? f : function(){}; },
 
-		findIndex: function(arr,f) {
-
+		all: function(arr, p) {
 			var len = arr.length;
-			for(var i = 0; i < len; i++) {
-				if (f(arr[i])) {
-					return i;
+			for (var i = 0; i < len; i++) {
+				if(!p(arr[i])) {
+					return false;
 				}
 			}
-
-			return -1;
+			return true;
 		},
-
+		
 		update: function(it,cmd) {
 			return React.addons.update(it,cmd);
 		},
-
+		
 		updateState: function(that,cmd) {
 			that.setState(React.addons.update(that.state,cmd));
-		},
-
-		include: function(that,props) {
-			props.forEach(function(prop) { that[prop] = pl[prop]; });
 		},
 
 		observable: function(it) {
@@ -55,11 +49,11 @@
 			};
 
 			pl.extend(it, {
-
+				
 				addChangeListener: function(callback) {
 					callbacks.push(callback);
 				},
-
+				
 				removeChangeListener: function(callback) {
 					var i = callbacks.indexOf(callback);
 					if (i !== -1) {

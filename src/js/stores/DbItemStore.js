@@ -17,7 +17,7 @@
 */
 
 (function(pl) {
-	
+
 	var TAG = "DbItemStore:::";
 	var NAME = "DbItemStore";
 
@@ -38,12 +38,18 @@
 	};
 
 	var idSeq;
-	var dbItems = [];
+	var dbItems;
 
 	var notify = pl.observable(DbItemStore);
 
+	var init = function() {
+		idSeq = 0;
+		dbItems = [];
+		notify.init();
+	};
+
 	var getDbItemIndex = function(id) {
-		return pl.findIndex(dbItems, function(dbItem) { return dbItem.db.id === id; });
+		return _.findIndex(dbItems, function(dbItem) { return dbItem.db.id === id; });
 	};
 
 	var updateDbItem = function(id, f) {
@@ -54,7 +60,7 @@
 			dbItems = pl.update(dbItems, {$splice: [[i,1,newDbItem]]});
 		}
 	};
-	
+
 	var load = function() {
 
 		var dbs = pl.SettingsStore.getDatabases();
@@ -153,6 +159,8 @@
 
 	pl.DbItemStore = pl.extend(DbItemStore, {
 
+		_init: init,
+
 		getDbItems: function() {
 			return dbItems;
 		},
@@ -172,4 +180,6 @@
 			});
 		}
 	});
+
+	init();
 })(pl||{});

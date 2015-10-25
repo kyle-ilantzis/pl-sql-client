@@ -76,6 +76,10 @@ Watcher.prototype.save = function(newValue) {
 		});
 };
 
+Watcher.prototype.die = function() {
+	this._cb = function(){};
+}
+
 Watcher.prototype._update = function(err, readValue) {
 
 	if (readValue) {

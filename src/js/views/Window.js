@@ -7,9 +7,13 @@
 	// How long to wait before setting the new window rect dimensions
 	var SET_WINDOW_RECT_DELAY = 500;
 
-	var loaded = false;
+	var loaded;
+	var setWindowRectTimeoutId;
 
-	var setWindowRectTimeoutId = null;
+	var init = function() {
+	    loaded = false;
+        setWindowRectTimeoutId = false;
+	};
 
 	var load = function() {
 
@@ -82,6 +86,11 @@
 	};
 
 	pl.Window = {
+
+	    _init: init,
+
 		load: load
 	};
+
+	init();
 })(pl||{});
