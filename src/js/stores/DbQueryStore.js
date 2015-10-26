@@ -26,14 +26,19 @@
         QUERY: "DbQueryStore-QUERY"
     };
 
-    var multiQueryIdSeq = 0;
-    var multiQueryResult = { id: 0, results: [] };
-
-    var isQuerying = false;
+    var isQuerying;
+    var multiQueryIdSeq;
+    var multiQueryResult;
 
     var multiquery = new MultiQuery();
-
     var notify = pl.observable(DbQueryStore);
+
+    var init = function() {
+        isQuerying = false;
+        multiQueryIdSeq = 0;
+        multiQueryResult = null;
+        notify.init();
+    };
 
     var query = function(sql) {
 
@@ -83,6 +88,8 @@
 
     pl.DbQueryStore = pl.extend(DbQueryStore, {
 
+        _init: init,
+
         isQuerying: function() {
             return isQuerying;
         },
@@ -91,4 +98,6 @@
             return multiQueryResult;
         }
     });
+
+    init();
 })(pl||{});
