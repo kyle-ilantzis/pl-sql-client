@@ -71,10 +71,10 @@
 						<span></span>
 					</div>;
 				}
-				else if ( multiQueryResult.error ) {
+				else if ( multiQueryResult && multiQueryResult.error ) {
 					return <pl.CmdError error={multiQueryResult.error}/>;
 				}
-				else {
+				else if ( multiQueryResult ) {
 					return multiQueryResult.results.map(createDbQuery);
 				}
 			}
