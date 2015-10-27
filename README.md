@@ -36,17 +36,17 @@ That software will help you retrieves and compare quickly your data between vari
 
  ![Configuring database](doc/pictures/database1.png)
 
-![Viewing database configuration](https://raw.githubusercontent.com/kyle-ilantzis/pl-sql-client/master/doc/pictures/history.png)
+![Viewing database configuration](doc/pictures/history.png)
 
  * History of executed queries
 
-![Consulting history of queries](https://raw.githubusercontent.com/kyle-ilantzis/pl-sql-client/master/doc/pictures/query.png)
+![Consulting history of queries](doc/pictures/query.png)
 
  * Mutiple themes
 
- ![flatly themne](https://raw.githubusercontent.com/kyle-ilantzis/pl-sql-client/master/doc/pictures/theme-1.png)
+ ![flatly themne](doc/pictures/theme-1.png)
 
-![superhero themne](https://raw.githubusercontent.com/kyle-ilantzis/pl-sql-client/master/doc/pictures/theme-2.png)
+![superhero themne](doc/pictures/theme-2.png)
 
 ... and many more!
 
