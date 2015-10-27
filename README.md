@@ -14,11 +14,22 @@ That software will help you retrieves and compare quickly your data between vari
  * [Node v4.2.1](https://nodejs.org/en/)
 
 ### Quick start
-
- 1. git clone git@github.com:kyle-ilantzis/pl-sql-client.git
- 2. npm install
- 3. npm install -g gulp
- 4. gulp
+1. Clone the repository
+```
+git clone git@github.com:kyle-ilantzis/pl-sql-client.git
+ ```
+2. Install Dependencies
+```
+npm install
+ ```
+3. Install gulp globally
+```
+npm install -g gulp
+ ```
+4. Launch default gulp task
+```
+gulp
+```
 
 ## Download
 
