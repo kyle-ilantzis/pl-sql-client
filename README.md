@@ -2,9 +2,9 @@
 
 Pretty Legendary SQL Client is graphical SQL client that allows you to query multiple databases at once.
 
-Once connections to databases have been configured, [pl-sql-client]() sends a query to all configured connections and displays the results.
+Once connections to databases have been configured, [pl-sql-client](https://github.com/kyle-ilantzis/pl-sql-client) sends a query to all configured connections and displays the results.
 
-[pl-sql-client]() will help you retrieve and compare your data quickly between various schemas in your infrastructure.
+[pl-sql-client](https://github.com/kyle-ilantzis/pl-sql-client) will help you retrieve and compare your data quickly between various schemas in your infrastructure.
 
 ![Executing query](doc/pictures/query.png)
 
