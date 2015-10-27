@@ -41,8 +41,6 @@ gulp
   * Postgres
   * MySQL
 
- ![Executing query](doc/pictures/query.png)  
-
  * Configuring a set of database
 
  ![Configuring database](doc/pictures/database1.png)
