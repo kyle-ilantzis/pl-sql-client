@@ -47,11 +47,11 @@ gulp
 
  ![Configuring database](doc/pictures/database1.png)
 
-![Viewing database configuration](doc/pictures/history.png)
+![Viewing database configuration](doc/pictures/database2.png)
 
  * History of executed queries
 
-![Consulting history of queries](doc/pictures/query.png)
+![Consulting history of queries](doc/pictures/history.png)
 
  * Mutiple themes
 
