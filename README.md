@@ -1,10 +1,10 @@
 # Pretty Legendary SQL Client
 
-Pretty Legendary SQL Client is graphical SQL client that allow you to query multiple database at once.
+Pretty Legendary SQL Client is graphical SQL client that allows you to query multiple databases at once.
 
-Once your connection to database are configured, the software will take care to send asked query to all configured connection and display the result.
+Once connections to databases have been configured, [pl-sql-client]() sends a query to all configured connections and displays the results.
 
-That software will help you retrieves and compare quickly your data between various schema in your infrastructure.
+[pl-sql-client]() will help you retrieve and compare your data quickly between various schemas in your infrastructure.
 
 ![Executing query](doc/pictures/query.png)
 
@@ -37,11 +37,11 @@ gulp
 
 ## Features
 
- * Executing query on multiple database
+ * Execute queries on multiple databases
   * Postgres
   * MySQL
 
- * Configuring a set of database
+ * Configuring a set of databases
 
  ![Configuring database](doc/pictures/database1.png)
 
@@ -59,9 +59,9 @@ gulp
 
 ... and many more!
 
-## Limitation
+## Limitations
 
- * Only 'select' statement are currently supported. Run update and delete at your own risk. [Related issue](https://github.com/kyle-ilantzis/pl-sql-client/issues/9)
+ * Only 'select' statement is currently supported. Run update and delete at your own risk. [Related issue](https://github.com/kyle-ilantzis/pl-sql-client/issues/9)
  * Credentials are saved in clear text.
 
 ## License
